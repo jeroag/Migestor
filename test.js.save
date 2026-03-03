@@ -1,0 +1,4 @@
+const db = require('./src/db');
+db.query('SELECT 1')
+  .then(() => console.log('Conexion OK'))
+  .catch(e => console.error('Error:', e.message)UU

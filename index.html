@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Mi Gestor Financiero</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>💸 Mi Gestor Financiero</h1>
+
+      <!-- RESUMEN / BALANCE -->
+      <div class="resumen">
+        <div class="resumen-item ingresos-total">
+          <span>Total Ingresos</span>
+          <strong id="total-ingresos">$0.00</strong>
+        </div>
+        <div class="resumen-item gastos-total">
+          <span>Total Gastos</span>
+          <strong id="total-gastos">$0.00</strong>
+        </div>
+        <div class="resumen-item balance">
+          <span>Balance</span>
+          <strong id="balance">$0.00</strong>
+        </div>
+      </div>
+
+      <!-- PESTAÑAS -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('gastos')">💸 Gastos</button>
+        <button class="tab-btn" onclick="switchTab('ingresos')">💰 Ingresos</button>
+      </div>
+
+      <!-- PESTAÑA GASTOS -->
+      <div id="tab-gastos" class="tab-content active">
+        <form id="expense-form">
+          <input type="text" id="desc" placeholder="¿En qué gastaste?" required />
+          <input type="number" id="amount" placeholder="Monto ($)" step="0.01" min="0.01" required />
+          <select id="cat">
+            <option value="Comida">Comida</option>
+            <option value="Transporte">Transporte</option>
+            <option value="Ocio">Ocio</option>
+            <option value="Renta">Renta</option>
+            <option value="Salud">Salud</option>
+            <option value="Otros">Otros</option>
+          </select>
+          <button type="submit">Añadir Gasto</button>
+        </form>
+
+        <div id="lista-gastos">
+          <h2>Movimientos Recientes</h2>
+          <ul id="expenses-list"></ul>
+        </div>
+      </div>
+
+      <!-- PESTAÑA INGRESOS -->
+      <div id="tab-ingresos" class="tab-content">
+        <form id="income-form">
+          <input type="text" id="inc-desc" placeholder="¿De dónde viene el ingreso?" required />
+          <input type="number" id="inc-amount" placeholder="Monto ($)" step="0.01" min="0.01" required />
+          <select id="inc-cat">
+            <option value="Salario">Salario</option>
+            <option value="Freelance">Freelance</option>
+            <option value="Inversión">Inversión</option>
+            <option value="Regalo">Regalo</option>
+            <option value="Otros">Otros</option>
+          </select>
+          <button type="submit">Añadir Ingreso</button>
+        </form>
+
+        <div id="lista-ingresos">
+          <h2>Ingresos Recientes</h2>
+          <ul id="income-list"></ul>
+        </div>
+      </div>
+
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
