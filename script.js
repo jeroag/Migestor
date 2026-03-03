@@ -1,4 +1,4 @@
-const API = 'https://tu-url.up.railway.app';
+const API = 'migestor-production.up.railway.app';
 
 // ==================
 //  PESTAÑAS
