@@ -3,7 +3,8 @@ require('dotenv').config();
 
 const sql = postgres(process.env.DATABASE_URL, {
   ssl: 'require',
-  prepare: false // IMPORTANTE: Supabase Pooler requiere esto en 'false' a veces
+  prepare: false,      // Esto evita errores de protocolo con el Pooler de Supabase
+  connect_timeout: 30  // Da más tiempo para la conexión inicial
 });
 
 module.exports = sql;
