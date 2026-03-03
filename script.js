@@ -1,4 +1,5 @@
-const API = 'migestor-production.up.railway.app';
+// CORRECCIÓN: Se añade el protocolo https:// y el prefijo /api para coincidir con el servidor
+const API = 'https://migestor-production.up.railway.app/api'; 
 
 // ==================
 //  PESTAÑAS
@@ -80,11 +81,13 @@ async function loadExpenses() {
             </li>
         `).join('');
     } catch (error) {
+        console.error('Error cargando gastos:', error);
         alert('Error cargando gastos.');
     }
 }
 
 async function deleteGasto(id) {
+    if(!confirm('¿Estás seguro de eliminar este gasto?')) return;
     try {
         await fetch(`${API}/gastos/${id}`, { method: 'DELETE' });
         loadExpenses();
@@ -128,7 +131,7 @@ async function loadIncome() {
         const res = await fetch(`${API}/ingresos`);
         const ingresos = await res.json();
         const list = document.getElementById('income-list');
-        if (ingresos.length === 0) {
+        if (!ingresos || ingresos.length === 0) {
             list.innerHTML = '<li class="vacio">No hay ingresos registrados</li>';
             return;
         }
@@ -145,11 +148,13 @@ async function loadIncome() {
             </li>
         `).join('');
     } catch (error) {
+        console.error('Error cargando ingresos:', error);
         alert('Error cargando ingresos.');
     }
 }
 
 async function deleteIngreso(id) {
+    if(!confirm('¿Estás seguro de eliminar este ingreso?')) return;
     try {
         await fetch(`${API}/ingresos/${id}`, { method: 'DELETE' });
         loadIncome();
@@ -162,6 +167,7 @@ async function deleteIngreso(id) {
 // ==================
 //  INICIO
 // ==================
+// Se ejecutan las funciones de carga al iniciar la página
 loadExpenses();
 loadIncome();
 loadResumen();
