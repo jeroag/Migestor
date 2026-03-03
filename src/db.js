@@ -3,8 +3,10 @@ require('dotenv').config();
 
 const sql = postgres(process.env.DATABASE_URL, {
   ssl: 'require',
-  prepare: false,      // Esto evita errores de protocolo con el Pooler de Supabase
-  connect_timeout: 30  // Da más tiempo para la conexión inicial
+  prepare: false, // OBLIGATORIO para evitar el error "Tenant not found"
+  connection: {
+    application_name: 'migestor'
+  }
 });
 
 module.exports = sql;
