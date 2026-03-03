@@ -27,15 +27,31 @@
 
       <!-- PESTAÑAS -->
       <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('gastos')">💸 Gastos</button>
-        <button class="tab-btn" onclick="switchTab('ingresos')">💰 Ingresos</button>
+        <button class="tab-btn active" onclick="switchTab('gastos')">
+          💸 Gastos
+        </button>
+        <button class="tab-btn" onclick="switchTab('ingresos')">
+          💰 Ingresos
+        </button>
       </div>
 
       <!-- PESTAÑA GASTOS -->
       <div id="tab-gastos" class="tab-content active">
         <form id="expense-form">
-          <input type="text" id="desc" placeholder="¿En qué gastaste?" required />
-          <input type="number" id="amount" placeholder="Monto ($)" step="0.01" min="0.01" required />
+          <input
+            type="text"
+            id="desc"
+            placeholder="¿En qué gastaste?"
+            required
+          />
+          <input
+            type="number"
+            id="amount"
+            placeholder="Monto ($)"
+            step="0.01"
+            min="0.01"
+            required
+          />
           <select id="cat">
             <option value="Comida">Comida</option>
             <option value="Transporte">Transporte</option>
@@ -56,8 +72,20 @@
       <!-- PESTAÑA INGRESOS -->
       <div id="tab-ingresos" class="tab-content">
         <form id="income-form">
-          <input type="text" id="inc-desc" placeholder="¿De dónde viene el ingreso?" required />
-          <input type="number" id="inc-amount" placeholder="Monto ($)" step="0.01" min="0.01" required />
+          <input
+            type="text"
+            id="inc-desc"
+            placeholder="¿De dónde viene el ingreso?"
+            required
+          />
+          <input
+            type="number"
+            id="inc-amount"
+            placeholder="Monto ($)"
+            step="0.01"
+            min="0.01"
+            required
+          />
           <select id="inc-cat">
             <option value="Salario">Salario</option>
             <option value="Freelance">Freelance</option>
@@ -73,7 +101,6 @@
           <ul id="income-list"></ul>
         </div>
       </div>
-
     </div>
 
     <script src="script.js"></script>
