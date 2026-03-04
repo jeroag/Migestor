@@ -253,26 +253,36 @@ li {
 }
 
 .btn-delete {
-  background: none;
-  border: none;
+  background: #fdecea;
+  border: 1px solid #f5c6cb;
+  color: #c62828;
   cursor: pointer;
-  font-size: 1.1rem;
-  padding: 6px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  padding: 0;
   border-radius: 6px;
-  width: auto;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
   margin: 0;
-  transition: background 0.2s;
   flex-shrink: 0;
-  -webkit-tap-highlight-color: transparent;
-  min-width: 36px;
-  min-height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background 0.2s, transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  line-height: 1;
 }
 
 .btn-delete:hover {
-  background: #fdecea;
+  background: #e53935;
+  border-color: #e53935;
+  color: white;
+}
+
+.btn-delete:active {
+  transform: scale(0.93);
 }
 
 .vacio {

@@ -79,7 +79,7 @@ async function loadExpenses() {
         </div>
         <div class="item-right">
           <span class="monto-gasto">-$${parseFloat(g.monto).toFixed(2)}</span>
-          <button class="btn-delete" onclick="deleteGasto(${g.id})" title="Eliminar">🗑️</button>
+          <button type="button" class="btn-delete" onclick="deleteGasto(${g.id})" title="Eliminar">✕</button>
         </div>
       </li>
     `).join("");
@@ -145,7 +145,7 @@ async function loadIncome() {
         </div>
         <div class="item-right">
           <span class="monto-ingreso">+$${parseFloat(i.monto).toFixed(2)}</span>
-          <button class="btn-delete" onclick="deleteIngreso(${i.id})" title="Eliminar">🗑️</button>
+          <button type="button" class="btn-delete" onclick="deleteIngreso(${i.id})" title="Eliminar">✕</button>
         </div>
       </li>
     `).join("");
@@ -211,7 +211,7 @@ async function loadMetas() {
         <div class="meta-card ${completada ? 'meta-completada' : ''}">
           <div class="meta-header">
             <span class="meta-nombre">${completada ? '✅' : '🎯'} ${m.nombre}</span>
-            <button class="btn-delete" onclick="deleteMeta(${m.id})" title="Eliminar meta">🗑️</button>
+            <button type="button" class="btn-delete" onclick="deleteMeta(${m.id})" title="Eliminar">✕</button>
           </div>
           <div class="meta-montos">
             <span>$${actual.toFixed(2)} <small>de $${objetivo.toFixed(2)}</small></span>
