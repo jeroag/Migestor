@@ -1,4 +1,4 @@
-body {
+bbody {
   font-family: sans-serif;
   background: #f4f7f6;
   display: flex;
@@ -11,7 +11,7 @@ body {
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 460px;
+  width: 520px;
   margin-top: 50px;
 }
 
@@ -19,6 +19,18 @@ h1 {
   text-align: center;
   margin-bottom: 1.5rem;
   color: #333;
+}
+
+h2 {
+  font-size: 1rem;
+  color: #555;
+  margin: 1rem 0 0.5rem;
+}
+
+h3 {
+  font-size: 0.95rem;
+  color: #444;
+  margin: 0 0 0.5rem;
 }
 
 /* ==================
@@ -49,56 +61,40 @@ h1 {
   font-size: 1.1rem;
 }
 
-.ingresos-total {
-  background: #e8f5e9;
-}
-.ingresos-total strong {
-  color: #2e7d32;
-}
+.ingresos-total { background: #e8f5e9; }
+.ingresos-total strong { color: #2e7d32; }
+.gastos-total { background: #fdecea; }
+.gastos-total strong { color: #c62828; }
+.balance { background: #e3f2fd; }
+.balance strong { color: #1565c0; }
 
-.gastos-total {
-  background: #fdecea;
-}
-.gastos-total strong {
-  color: #c62828;
-}
-
-.balance {
-  background: #e3f2fd;
-}
-.balance strong {
-  color: #1565c0;
-}
-
-.positivo {
-  color: #2e7d32 !important;
-}
-.negativo {
-  color: #c62828 !important;
-}
+.positivo { color: #2e7d32 !important; }
+.negativo { color: #c62828 !important; }
 
 /* ==================
    PESTAÑAS
 ================== */
 .tabs {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   margin-bottom: 1.2rem;
+  flex-wrap: wrap;
 }
 
 .tab-btn {
   flex: 1;
-  padding: 10px;
+  padding: 9px 6px;
   background: #f0f0f0;
   color: #555;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   transition: background 0.2s;
   width: auto;
   margin: 0;
+  min-width: 80px;
 }
 
 .tab-btn.active {
@@ -110,13 +106,8 @@ h1 {
   background: #ddd;
 }
 
-.tab-content {
-  display: none;
-}
-
-.tab-content.active {
-  display: block;
-}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
 
 /* ==================
    FORMULARIOS
@@ -228,4 +219,163 @@ li {
   padding: 20px 0;
   border-bottom: none;
   justify-content: center;
+}
+
+/* ========================
+   METAS DE AHORRO
+======================== */
+.vacio-metas {
+  color: #aaa;
+  text-align: center;
+  padding: 20px 0;
+  font-size: 0.9rem;
+}
+
+.meta-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 12px;
+  background: #fafafa;
+  transition: box-shadow 0.2s;
+}
+
+.meta-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.meta-completada {
+  border-color: #a5d6a7;
+  background: #f1f8e9;
+}
+
+.meta-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.meta-nombre {
+  font-weight: bold;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.meta-montos {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+.meta-montos small {
+  color: #999;
+}
+
+.meta-pct {
+  font-weight: bold;
+  color: #1565c0;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #42a5f5, #1565c0);
+  border-radius: 10px;
+  transition: width 0.4s ease;
+  min-width: 2px;
+}
+
+.progress-done {
+  background: linear-gradient(90deg, #66bb6a, #2e7d32);
+}
+
+.meta-logro {
+  text-align: center;
+  font-size: 0.88rem;
+  color: #2e7d32;
+  font-weight: bold;
+  margin: 0;
+}
+
+.meta-abonar {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.meta-abonar input {
+  flex: 1;
+  margin: 0;
+  padding: 7px 10px;
+  font-size: 0.88rem;
+}
+
+.meta-abonar button {
+  padding: 7px 14px;
+  background: #1565c0;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: bold;
+  white-space: nowrap;
+  width: auto;
+  margin: 0;
+  transition: background 0.2s;
+}
+
+.meta-abonar button:hover {
+  background: #0d47a1;
+}
+
+/* ==================
+   GRÁFICOS
+================== */
+.chart-section {
+  margin-bottom: 2rem;
+  padding: 16px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.chart-container {
+  position: relative;
+  height: 220px;
+}
+
+.chart-container--tall {
+  height: 260px;
+}
+
+.btn-refresh {
+  width: 100%;
+  padding: 10px;
+  background: #e3f2fd;
+  color: #1565c0;
+  border: 1px solid #90caf9;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin-top: 4px;
+  transition: background 0.2s;
+  width: 100%;
+  margin: 0;
+}
+
+.btn-refresh:hover {
+  background: #bbdefb;
 }
