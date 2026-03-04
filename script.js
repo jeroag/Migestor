@@ -4,6 +4,53 @@ const API = "https://migestor-production.up.railway.app/api";
 //  MODAL
 // ==================
 let _modalCallback = null;
+// Al inicio del script.js
+document.addEventListener("DOMContentLoaded", () => {
+  const token = localStorage.getItem("auth_token");
+  const authOverlay = document.getElementById("auth-overlay");
+
+  if (!token) {
+    document.body.classList.add("not-logged-in");
+    authOverlay.style.display = "flex";
+  } else {
+    document.body.classList.remove("not-logged-in");
+    authOverlay.style.display = "none";
+    initApp(); // Función que carga tus datos actuales
+  }
+});
+
+// Lógica del formulario de Login
+document.getElementById("login-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-password").value;
+  const errorMsg = document.getElementById("login-error");
+
+  try {
+    const res = await fetch(`${API}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      localStorage.setItem("auth_token", data.token);
+      window.location.reload(); // Recargamos para mostrar la app
+    } else {
+      errorMsg.style.display = "block";
+    }
+  } catch (err) {
+    console.error("Error login:", err);
+    alert("Error de conexión con el servidor");
+  }
+});
+
+// Función para cerrar sesión (puedes poner un botón en el header)
+function logout() {
+  localStorage.removeItem("auth_token");
+  window.location.reload();
+}
 
 function showModal(mensaje, onConfirm) {
   document.getElementById("modal-msg").textContent = mensaje;
@@ -431,6 +478,26 @@ async function loadGraficos() {
   } catch (error) {
     console.error("Error cargando gráficos:", error);
   }
+}
+
+function renderPresupuestos(presupuestos, gastos) {
+  const container = document.getElementById('presupuestos-list');
+  container.innerHTML = presupuestos.map(p => {
+    const gastado = gastos.filter(g => g.categoria === p.categoria)
+                          .reduce((acc, curr) => acc + curr.monto, 0);
+    const porcentaje = Math.min((gastado / p.monto_limite) * 100, 100);
+    const color = porcentaje > 90 ? 'var(--red)' : 'var(--accent)';
+
+    return `
+      <div class="budget-item">
+        <span>${p.categoria}</span>
+        <div class="progress-bar-bg">
+          <div class="progress-fill" style="width: ${porcentaje}%; background: ${color}"></div>
+        </div>
+        <small>$${gastado} / $${p.monto_limite}</small>
+      </div>
+    `;
+  }).join('');
 }
 
 // ==================

@@ -236,3 +236,19 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Servidor activo en puerto ${PORT}`);
 });
+
+// Necesitarás instalar: npm install bcryptjs jsonwebtoken
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
+app.post("/api/login", async (req, res) => {
+  const { email, password } = req.body;
+  const [user] = await sql`SELECT * FROM usuarios WHERE email = ${email}`;
+  
+  if (user && await bcrypt.compare(password, user.password)) {
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
+    res.json({ token, user: { nombre: user.nombre } });
+  } else {
+    res.status(401).json({ error: "Credenciales inválidas" });
+  }
+});

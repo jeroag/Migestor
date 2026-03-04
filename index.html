@@ -9,6 +9,28 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
+    <div id="auth-overlay" class="auth-overlay">
+  <div class="auth-box">
+    <div class="logo-text" style="margin-bottom: 2rem; text-align: center;">
+      <h1>MI<span>GESTOR</span></h1>
+      <p>ACCESO AL SISTEMA</p>
+    </div>
+    <form id="login-form">
+      <div class="form-group">
+        <label>EMAIL</label>
+        <input type="email" id="login-email" placeholder="usuario@ejemplo.com" required>
+      </div>
+      <div class="form-group">
+        <label>CONTRASEÑA</label>
+        <input type="password" id="login-password" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn-add" style="width: 100%; margin-top: 1rem;">INGRESAR</button>
+      <p id="login-error" style="color: var(--red); font-size: 0.8rem; margin-top: 10px; display: none; text-align: center;">
+        Credenciales incorrectas
+      </p>
+    </form>
+  </div>
+</div>
     <div class="wrapper">
 
       <!-- HEADER -->

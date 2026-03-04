@@ -717,3 +717,93 @@ li:last-child { border-bottom: none; }
   .wrapper { padding: 0 24px 80px; }
   header { padding: 40px 0 28px; }
 }
+/* RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+  .wrapper {
+    padding: 10px;
+  }
+
+  header {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+
+  .resumen {
+    grid-template-columns: 1fr; /* Una sola columna en móvil */
+  }
+
+  .nav-tabs {
+    display: flex;
+    overflow-x: auto; /* Scroll horizontal para las pestañas */
+    white-space: nowrap;
+    padding-bottom: 5px;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .logo-text h1 {
+    font-size: 2rem;
+  }
+}
+/* AUTH OVERLAY */
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--dark);
+  z-index: 9999; /* Por encima de todo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Ocultar el contenido cuando no hay sesión */
+body.not-logged-in .wrapper {
+  display: none;
+}
+
+.auth-box {
+  background: var(--panel);
+  border: 1px solid var(--border-bright);
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+}
+
+.auth-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--accent);
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--accent);
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 100%;
+  background: var(--dark);
+  border: 1px solid var(--border);
+  padding: 12px;
+  color: var(--text-bright);
+  font-family: 'Barlow Condensed', sans-serif;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
