@@ -50,7 +50,9 @@ async function loadResumen() {
     document.getElementById("total-gastos").textContent = `$${data.total_gastos.toFixed(2)}`;
     const balanceEl = document.getElementById("balance");
     balanceEl.textContent = `$${data.balance.toFixed(2)}`;
-    balanceEl.className = data.balance >= 0 ? "positivo" : "negativo";
+    balanceEl.className = data.balance >= 0 ? "resumen-value orange" : "resumen-value red";
+    const hb = document.getElementById("hb-balance");
+    if (hb) hb.textContent = `BALANCE ${data.balance >= 0 ? "▲" : "▼"} $${Math.abs(data.balance).toFixed(2)}`;
   } catch (error) {
     console.error("Error cargando resumen:", error);
   }
@@ -299,8 +301,8 @@ async function deleteMeta(id) {
 //  GRÁFICOS
 // ==================
 const COLORS = [
-  "#4e79a7","#f28e2b","#e15759","#76b7b2",
-  "#59a14f","#edc948","#b07aa1","#ff9da7","#9c755f"
+  "#E8921A","#38BDF8","#4ADE80","#F87171",
+  "#A78BFA","#FBBF24","#FFB347","#67e8f9","#86efac"
 ];
 
 function destroyChart(instance) {
@@ -328,11 +330,17 @@ async function loadGraficos() {
       },
       options: {
         plugins: {
-          legend: { position: "bottom" },
+          legend: {
+            position: "bottom",
+            labels: { color: "#C8D8E8", font: { family: "'Share Tech Mono', monospace", size: 11 }, boxWidth: 12 }
+          },
           tooltip: {
-            callbacks: {
-              label: (ctx) => ` $${ctx.parsed.toFixed(2)}`
-            }
+            backgroundColor: "#14181F",
+            borderColor: "#3A4A5C",
+            borderWidth: 1,
+            titleColor: "#E8F0F8",
+            bodyColor: "#C8D8E8",
+            callbacks: { label: (ctx) => ` $${ctx.parsed.toFixed(2)}` }
           }
         }
       }
@@ -354,11 +362,17 @@ async function loadGraficos() {
       },
       options: {
         plugins: {
-          legend: { position: "bottom" },
+          legend: {
+            position: "bottom",
+            labels: { color: "#C8D8E8", font: { family: "'Share Tech Mono', monospace", size: 11 }, boxWidth: 12 }
+          },
           tooltip: {
-            callbacks: {
-              label: (ctx) => ` $${ctx.parsed.toFixed(2)}`
-            }
+            backgroundColor: "#14181F",
+            borderColor: "#3A4A5C",
+            borderWidth: 1,
+            titleColor: "#E8F0F8",
+            bodyColor: "#C8D8E8",
+            callbacks: { label: (ctx) => ` $${ctx.parsed.toFixed(2)}` }
           }
         }
       }
@@ -375,34 +389,41 @@ async function loadGraficos() {
           {
             label: "Ingresos",
             data: data.evolucionMensual.map(r => r.total_ingresos),
-            backgroundColor: "#59a14f",
-            borderRadius: 4
+            backgroundColor: "rgba(74,222,128,0.7)",
+            borderColor: "#4ADE80",
+            borderWidth: 1,
+            borderRadius: 0
           },
           {
             label: "Gastos",
             data: data.evolucionMensual.map(r => r.total_gastos),
-            backgroundColor: "#e15759",
-            borderRadius: 4
+            backgroundColor: "rgba(248,113,113,0.7)",
+            borderColor: "#F87171",
+            borderWidth: 1,
+            borderRadius: 0
           }
         ]
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
-          legend: { position: "top" },
+          legend: {
+            position: "top",
+            labels: { color: "#C8D8E8", font: { family: "'Share Tech Mono', monospace", size: 11 }, boxWidth: 12 }
+          },
           tooltip: {
-            callbacks: {
-              label: (ctx) => ` ${ctx.dataset.label}: $${ctx.parsed.y.toFixed(2)}`
-            }
+            backgroundColor: "#14181F",
+            borderColor: "#3A4A5C",
+            borderWidth: 1,
+            titleColor: "#E8F0F8",
+            bodyColor: "#C8D8E8",
+            callbacks: { label: (ctx) => ` ${ctx.dataset.label}: $${ctx.parsed.y.toFixed(2)}` }
           }
         },
         scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              callback: (v) => `$${v}`
-            }
-          }
+          x: { ticks: { color: "#6A7A8A", font: { family: "'Share Tech Mono', monospace", size: 10 } }, grid: { color: "rgba(42,50,64,0.5)" } },
+          y: { beginAtZero: true, ticks: { color: "#6A7A8A", font: { family: "'Share Tech Mono', monospace", size: 10 }, callback: (v) => `$${v}` }, grid: { color: "rgba(42,50,64,0.5)" } }
         }
       }
     });
