@@ -1,34 +1,65 @@
-bbody {
-  font-family: sans-serif;
-  background: #f4f7f6;
-  display: flex;
-  justify-content: center;
-  padding-bottom: 50px;
+/* ==================
+   BASE & RESET
+================== */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #f4f7f6;
+  margin: 0;
+  padding: 0 0 60px 0;
+  min-height: 100vh;
+}
+
+/* ==================
+   CONTAINER
+================== */
 .container {
   background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 520px;
-  margin-top: 50px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  min-height: 100vh;
 }
 
+/* Pantallas medianas y grandes: card flotante */
+@media (min-width: 640px) {
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 30px 16px 60px;
+  }
+
+  .container {
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    min-height: unset;
+  }
+}
+
+/* ==================
+   TIPOGRAFÍA
+================== */
 h1 {
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin: 0 0 1.25rem;
   color: #333;
+  font-size: clamp(1.2rem, 5vw, 1.6rem);
 }
 
 h2 {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #555;
   margin: 1rem 0 0.5rem;
 }
 
 h3 {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: #444;
   margin: 0 0 0.5rem;
 }
@@ -37,36 +68,38 @@ h3 {
    RESUMEN
 ================== */
 .resumen {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 1.25rem;
 }
 
 .resumen-item {
-  flex: 1;
-  padding: 12px;
+  padding: 10px 8px;
   border-radius: 8px;
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .resumen-item span {
-  font-size: 0.75rem;
+  font-size: clamp(0.6rem, 2.5vw, 0.75rem);
   color: #666;
+  line-height: 1.2;
 }
 
 .resumen-item strong {
-  font-size: 1.1rem;
+  font-size: clamp(0.9rem, 3.5vw, 1.15rem);
+  word-break: break-all;
 }
 
 .ingresos-total { background: #e8f5e9; }
 .ingresos-total strong { color: #2e7d32; }
-.gastos-total { background: #fdecea; }
-.gastos-total strong { color: #c62828; }
-.balance { background: #e3f2fd; }
-.balance strong { color: #1565c0; }
+.gastos-total   { background: #fdecea; }
+.gastos-total strong   { color: #c62828; }
+.balance        { background: #e3f2fd; }
+.balance strong        { color: #1565c0; }
 
 .positivo { color: #2e7d32 !important; }
 .negativo { color: #c62828 !important; }
@@ -75,26 +108,29 @@ h3 {
    PESTAÑAS
 ================== */
 .tabs {
-  display: flex;
-  gap: 6px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
   margin-bottom: 1.2rem;
-  flex-wrap: wrap;
 }
 
 .tab-btn {
-  flex: 1;
-  padding: 9px 6px;
+  padding: 9px 4px;
   background: #f0f0f0;
   color: #555;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
-  font-size: 0.85rem;
+  font-size: clamp(0.7rem, 2.5vw, 0.85rem);
   transition: background 0.2s;
-  width: auto;
+  text-align: center;
+  width: 100%;
   margin: 0;
-  min-width: 80px;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .tab-btn.active {
@@ -115,30 +151,45 @@ h3 {
 input,
 select {
   width: 100%;
-  padding: 10px;
+  padding: 11px 12px;
   margin: 5px 0;
   border: 1px solid #ddd;
-  border-radius: 4px;
-  box-sizing: border-box;
-  font-size: 0.95rem;
+  border-radius: 6px;
+  font-size: 1rem; /* 1rem evita zoom en iOS */
+  appearance: auto;
+  -webkit-appearance: auto;
+  background: white;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #28a745;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
 }
 
 button[type="submit"] {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   margin: 8px 0 16px 0;
   background: #28a745;
   color: white;
   font-weight: bold;
   cursor: pointer;
   border: none;
-  border-radius: 4px;
-  font-size: 0.95rem;
+  border-radius: 6px;
+  font-size: 1rem;
   transition: background 0.2s;
+  -webkit-tap-highlight-color: transparent;
 }
 
 button[type="submit"]:hover {
   background: #218838;
+}
+
+button[type="submit"]:active {
+  background: #1a6e2e;
+  transform: scale(0.99);
 }
 
 /* ==================
@@ -154,9 +205,9 @@ li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 4px;
+  padding: 10px 2px;
   border-bottom: 1px solid #eee;
-  gap: 10px;
+  gap: 8px;
 }
 
 .item-info {
@@ -164,35 +215,40 @@ li {
   flex-direction: column;
   gap: 2px;
   flex: 1;
+  min-width: 0; /* permite que el texto se trunque */
 }
 
 .item-info strong {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .item-info small {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   color: #888;
 }
 
 .item-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 .monto-gasto {
   color: #c62828;
   font-weight: bold;
-  font-size: 0.95rem;
+  font-size: clamp(0.82rem, 3vw, 0.95rem);
   white-space: nowrap;
 }
 
 .monto-ingreso {
   color: #2e7d32;
   font-weight: bold;
-  font-size: 0.95rem;
+  font-size: clamp(0.82rem, 3vw, 0.95rem);
   white-space: nowrap;
 }
 
@@ -200,12 +256,19 @@ li {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 1rem;
-  padding: 4px;
-  border-radius: 4px;
+  font-size: 1.1rem;
+  padding: 6px;
+  border-radius: 6px;
   width: auto;
   margin: 0;
   transition: background 0.2s;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+  min-width: 36px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-delete:hover {
@@ -216,8 +279,8 @@ li {
   color: #aaa;
   font-size: 0.9rem;
   text-align: center;
-  padding: 20px 0;
-  border-bottom: none;
+  padding: 24px 0;
+  border-bottom: none !important;
   justify-content: center;
 }
 
@@ -227,13 +290,13 @@ li {
 .vacio-metas {
   color: #aaa;
   text-align: center;
-  padding: 20px 0;
+  padding: 24px 0;
   font-size: 0.9rem;
 }
 
 .meta-card {
   border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 14px;
   margin-bottom: 12px;
   background: #fafafa;
@@ -241,7 +304,7 @@ li {
 }
 
 .meta-card:hover {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
 
 .meta-completada {
@@ -252,7 +315,8 @@ li {
 .meta-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 8px;
   margin-bottom: 8px;
 }
 
@@ -260,14 +324,18 @@ li {
   font-weight: bold;
   font-size: 0.95rem;
   color: #333;
+  flex: 1;
+  word-break: break-word;
 }
 
 .meta-montos {
   display: flex;
   justify-content: space-between;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: #555;
   margin-bottom: 6px;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .meta-montos small {
@@ -277,6 +345,7 @@ li {
 .meta-pct {
   font-weight: bold;
   color: #1565c0;
+  white-space: nowrap;
 }
 
 .progress-bar {
@@ -292,8 +361,8 @@ li {
   height: 100%;
   background: linear-gradient(90deg, #42a5f5, #1565c0);
   border-radius: 10px;
-  transition: width 0.4s ease;
-  min-width: 2px;
+  transition: width 0.5s ease;
+  min-width: 3px;
 }
 
 .progress-done {
@@ -305,28 +374,30 @@ li {
   font-size: 0.88rem;
   color: #2e7d32;
   font-weight: bold;
-  margin: 0;
+  margin: 4px 0 0;
 }
 
 .meta-abonar {
   display: flex;
   gap: 8px;
-  margin-top: 6px;
+  margin-top: 8px;
+  align-items: center;
 }
 
 .meta-abonar input {
   flex: 1;
   margin: 0;
-  padding: 7px 10px;
-  font-size: 0.88rem;
+  padding: 9px 10px;
+  font-size: 1rem;
+  min-width: 0;
 }
 
 .meta-abonar button {
-  padding: 7px 14px;
+  padding: 9px 14px;
   background: #1565c0;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 0.88rem;
   font-weight: bold;
@@ -334,6 +405,8 @@ li {
   width: auto;
   margin: 0;
   transition: background 0.2s;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .meta-abonar button:hover {
@@ -344,25 +417,27 @@ li {
    GRÁFICOS
 ================== */
 .chart-section {
-  margin-bottom: 2rem;
-  padding: 16px;
+  margin-bottom: 1.5rem;
+  padding: 14px;
   border: 1px solid #eee;
-  border-radius: 8px;
+  border-radius: 10px;
   background: #fafafa;
 }
 
 .chart-container {
   position: relative;
-  height: 220px;
+  width: 100%;
+  height: clamp(180px, 45vw, 240px);
 }
 
 .chart-container--tall {
-  height: 260px;
+  height: clamp(200px, 50vw, 280px);
 }
 
 .btn-refresh {
+  display: block;
   width: 100%;
-  padding: 10px;
+  padding: 11px;
   background: #e3f2fd;
   color: #1565c0;
   border: 1px solid #90caf9;
@@ -370,12 +445,42 @@ li {
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: bold;
-  margin-top: 4px;
-  transition: background 0.2s;
-  width: 100%;
   margin: 0;
+  transition: background 0.2s;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .btn-refresh:hover {
   background: #bbdefb;
+}
+
+/* ==============================
+   RESPONSIVE: móviles pequeños
+============================== */
+@media (max-width: 380px) {
+  .container {
+    padding: 1rem 0.85rem;
+  }
+
+  .resumen-item span {
+    display: none; /* ocultamos la etiqueta, solo mostramos el número */
+  }
+
+  .tab-btn {
+    font-size: 0.65rem;
+    padding: 8px 2px;
+  }
+}
+
+/* ==============================
+   RESPONSIVE: tabletas (md)
+============================== */
+@media (min-width: 768px) {
+  .resumen-item strong {
+    font-size: 1.25rem;
+  }
+
+  .meta-abonar {
+    max-width: 360px;
+  }
 }
