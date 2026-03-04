@@ -1,5 +1,28 @@
 const API = "https://migestor-production.up.railway.app/api";
 
+// ==================
+//  MODAL
+// ==================
+let _modalCallback = null;
+
+function showModal(mensaje, onConfirm) {
+  document.getElementById("modal-msg").textContent = mensaje;
+  _modalCallback = onConfirm;
+  document.getElementById("modal-overlay").classList.add("visible");
+}
+
+function modalConfirm() {
+  document.getElementById("modal-overlay").classList.remove("visible");
+  if (_modalCallback) _modalCallback();
+  _modalCallback = null;
+}
+
+function modalCancel() {
+  document.getElementById("modal-overlay").classList.remove("visible");
+  _modalCallback = null;
+}
+
+
 // Chart instances
 let chartGastosCat = null;
 let chartIngresosCat = null;
@@ -89,14 +112,15 @@ async function loadExpenses() {
 }
 
 async function deleteGasto(id) {
-  if (!confirm("¿Eliminar este gasto?")) return;
-  try {
-    await fetch(`${API}/gastos/${id}`, { method: "DELETE" });
-    loadExpenses();
-    loadResumen();
-  } catch (error) {
-    alert("Error al eliminar el gasto.");
-  }
+  showModal("¿Eliminar este gasto?", async () => {
+    try {
+      await fetch(`${API}/gastos/${id}`, { method: "DELETE" });
+      loadExpenses();
+      loadResumen();
+    } catch (error) {
+      alert("Error al eliminar el gasto.");
+    }
+  });
 }
 
 // ==================
@@ -155,14 +179,15 @@ async function loadIncome() {
 }
 
 async function deleteIngreso(id) {
-  if (!confirm("¿Eliminar este ingreso?")) return;
-  try {
-    await fetch(`${API}/ingresos/${id}`, { method: "DELETE" });
-    loadIncome();
-    loadResumen();
-  } catch (error) {
-    alert("Error al eliminar el ingreso.");
-  }
+  showModal("¿Eliminar este ingreso?", async () => {
+    try {
+      await fetch(`${API}/ingresos/${id}`, { method: "DELETE" });
+      loadIncome();
+      loadResumen();
+    } catch (error) {
+      alert("Error al eliminar el ingreso.");
+    }
+  });
 }
 
 // ========================
@@ -260,13 +285,14 @@ async function abonarMeta(id) {
 }
 
 async function deleteMeta(id) {
-  if (!confirm("¿Eliminar esta meta de ahorro?")) return;
-  try {
-    await fetch(`${API}/metas/${id}`, { method: "DELETE" });
-    loadMetas();
-  } catch (error) {
-    alert("Error al eliminar la meta.");
-  }
+  showModal("¿Eliminar esta meta de ahorro?", async () => {
+    try {
+      await fetch(`${API}/metas/${id}`, { method: "DELETE" });
+      loadMetas();
+    } catch (error) {
+      alert("Error al eliminar la meta.");
+    }
+  });
 }
 
 // ==================

@@ -124,6 +124,17 @@
 
     </div>
 
+    <!-- MODAL DE CONFIRMACIÓN -->
+    <div id="modal-overlay" class="modal-overlay" onclick="modalCancel()">
+      <div class="modal-box" onclick="event.stopPropagation()">
+        <p id="modal-msg" class="modal-msg">¿Estás seguro?</p>
+        <div class="modal-actions">
+          <button type="button" id="modal-cancel" onclick="modalCancel()">Cancelar</button>
+          <button type="button" id="modal-confirm" onclick="modalConfirm()">Eliminar</button>
+        </div>
+      </div>
+    </div>
+
     <script src="script.js"></script>
   </body>
-</html>
+</html> 
