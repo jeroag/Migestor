@@ -225,17 +225,37 @@ body {
 /* ============================================================
    SIDEBAR
    ============================================================ */
+/* Overlay backdrop cuando sidebar abierto */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  top: 60px;
+  background: rgba(26,26,24,0.35);
+  z-index: 99;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.sidebar-backdrop.visible { display: block; }
+
 .sidebar {
   position: fixed;
-  top: 0;
+  top: 60px;
   left: 0;
   width: 240px;
-  height: 100vh;
+  height: calc(100vh - 60px);
   background: var(--bg-sidebar);
   display: flex;
   flex-direction: column;
   z-index: 100;
+  transform: translateX(-100%);
   transition: transform 0.25s ease;
+  box-shadow: 4px 0 24px rgba(26,26,24,0.15);
+}
+
+.sidebar.open {
+  transform: translateX(0);
 }
 
 .sidebar-logo {
@@ -384,7 +404,7 @@ body {
    MOBILE TOPBAR
    ============================================================ */
 .topbar {
-  display: none;
+  display: flex;
   position: fixed;
   top: 0;
   left: 0;
@@ -428,16 +448,30 @@ body {
   height: 1.5px;
   background: rgba(255,255,255,0.7);
   border-radius: 2px;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+}
+
+/* Hamburger → X cuando abierto */
+.hamburger.active span:nth-child(1) {
+  transform: translateY(6.5px) rotate(45deg);
+  background: rgba(255,255,255,0.9);
+}
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.hamburger.active span:nth-child(3) {
+  transform: translateY(-6.5px) rotate(-45deg);
+  background: rgba(255,255,255,0.9);
 }
 
 /* ============================================================
    MAIN CONTENT
    ============================================================ */
 .main {
-  margin-left: 240px;
+  margin-left: 0;
   flex: 1;
-  padding: 32px 36px 60px;
+  padding: 80px 36px 60px;
   min-height: 100vh;
 }
 
@@ -1047,21 +1081,6 @@ input::placeholder { color: var(--ink-light); }
 }
 
 @media (max-width: 768px) {
-  .topbar { display: flex; }
-
-  .sidebar {
-    transform: translateX(-100%);
-    top: 60px;
-    height: calc(100vh - 60px);
-  }
-
-  .sidebar.open { transform: translateX(0); }
-
-  .main {
-    margin-left: 0;
-    padding: 80px 16px 40px;
-  }
-
   .summary-bar {
     grid-template-columns: 1fr;
     gap: 10px;
@@ -1078,4 +1097,5 @@ input::placeholder { color: var(--ink-light); }
 
   .page-title { font-size: 1.6rem; }
   .field-row { grid-template-columns: 1fr; }
+  .main { padding: 80px 16px 40px; }
 }

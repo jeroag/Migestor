@@ -16,15 +16,31 @@ function authHeaders() {
 // ==================
 function toggleSidebar() {
   const sidebar = document.getElementById("sidebar");
-  sidebar.classList.toggle("open");
+  const backdrop = document.getElementById("sidebar-backdrop");
+  const hamburger = document.getElementById("hamburger");
+  const isOpen = sidebar.classList.contains("open");
+
+  if (isOpen) {
+    sidebar.classList.remove("open");
+    if (backdrop) backdrop.classList.remove("visible");
+    if (hamburger) hamburger.classList.remove("active");
+  } else {
+    sidebar.classList.add("open");
+    if (backdrop) backdrop.classList.add("visible");
+    if (hamburger) hamburger.classList.add("active");
+  }
 }
 
-// Close sidebar on outside click (mobile)
+// Close sidebar on outside click
 document.addEventListener("click", (e) => {
   const sidebar = document.getElementById("sidebar");
   const hamburger = document.getElementById("hamburger");
-  if (sidebar && !sidebar.contains(e.target) && hamburger && !hamburger.contains(e.target)) {
+  const backdrop = document.getElementById("sidebar-backdrop");
+  if (sidebar && sidebar.classList.contains("open") &&
+      !sidebar.contains(e.target) && hamburger && !hamburger.contains(e.target)) {
     sidebar.classList.remove("open");
+    if (backdrop) backdrop.classList.remove("visible");
+    if (hamburger) hamburger.classList.remove("active");
   }
 });
 
@@ -130,9 +146,13 @@ function switchTab(tab) {
   document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
   document.getElementById(`tab-${tab}`).classList.add("active");
   document.querySelector(`[data-tab="${tab}"]`).classList.add("active");
-  // Close mobile sidebar
+  // Close sidebar
   const sidebar = document.getElementById("sidebar");
+  const backdrop = document.getElementById("sidebar-backdrop");
+  const hamburger = document.getElementById("hamburger");
   if (sidebar) sidebar.classList.remove("open");
+  if (backdrop) backdrop.classList.remove("visible");
+  if (hamburger) hamburger.classList.remove("active");
   if (tab === "graficos") loadGraficos();
 }
 
