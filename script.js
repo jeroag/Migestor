@@ -15,7 +15,44 @@ function authHeaders() {
 //  MODAL
 // ==================
 let _modalCallback = null;
-// Al inicio del script.js
+
+// ==================
+//  BURGER MENU
+// ==================
+function toggleBurger() {
+  const btn = document.querySelector(".burger-btn");
+  const dropdown = document.getElementById("burger-dropdown");
+  btn.classList.toggle("active");
+  dropdown.classList.toggle("open");
+}
+
+// Cierra el burger si haces clic fuera
+document.addEventListener("click", (e) => {
+  const menu = document.getElementById("burger-menu");
+  if (menu && !menu.contains(e.target)) {
+    const btn = document.querySelector(".burger-btn");
+    const dropdown = document.getElementById("burger-dropdown");
+    if (btn) btn.classList.remove("active");
+    if (dropdown) dropdown.classList.remove("open");
+  }
+});
+
+function showBurger() {
+  const burgerMenu = document.getElementById("burger-menu");
+  if (!burgerMenu) return;
+  burgerMenu.style.display = "block";
+  // Muestra el email del usuario leyendo el token JWT
+  try {
+    const token = localStorage.getItem("auth_token");
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    const emailEl = document.getElementById("burger-email");
+    if (emailEl) emailEl.textContent = payload.email || `Usuario #${payload.userId}`;
+  } catch (e) {}
+}
+
+// ==================
+//  INIT
+// ==================
 document.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem("auth_token");
   const authOverlay = document.getElementById("auth-overlay");
@@ -23,10 +60,13 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!token) {
     document.body.classList.add("not-logged-in");
     authOverlay.style.display = "flex";
+    const burgerMenu = document.getElementById("burger-menu");
+    if (burgerMenu) burgerMenu.style.display = "none";
   } else {
     document.body.classList.remove("not-logged-in");
     authOverlay.style.display = "none";
-    initApp(); // Función que carga tus datos actuales
+    showBurger();
+    initApp();
   }
 });
 
@@ -47,7 +87,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
     if (res.ok) {
       const data = await res.json();
       localStorage.setItem("auth_token", data.token);
-      window.location.reload(); // Recargamos para mostrar la app
+      window.location.reload();
     } else {
       errorMsg.style.display = "block";
     }
@@ -57,7 +97,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
   }
 });
 
-// Función para cerrar sesión (puedes poner un botón en el header)
+// Función para cerrar sesión
 function logout() {
   localStorage.removeItem("auth_token");
   window.location.reload();
@@ -512,42 +552,15 @@ function renderPresupuestos(presupuestos, gastos) {
 }
 
 // ==================
-//  BURGER MENU
-// ==================
-function toggleBurger() {
-  const btn = document.querySelector('.burger-btn');
-  const dropdown = document.getElementById('burger-dropdown');
-  btn.classList.toggle('active');
-  dropdown.classList.toggle('open');
-}
-
-// Cierra el menú si haces clic fuera
-document.addEventListener('click', (e) => {
-  const menu = document.querySelector('.burger-menu');
-  if (menu && !menu.contains(e.target)) {
-    document.querySelector('.burger-btn').classList.remove('active');
-    document.getElementById('burger-dropdown').classList.remove('open');
-  }
-});
-
-// Muestra el email del usuario en el menú
-document.addEventListener('DOMContentLoaded', () => {
-  // Descodifica el token JWT para obtener el email (sin librerías)
-  const token = localStorage.getItem('auth_token');
-  if (token) {
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      // Si guardas el email en el token, úsalo aquí
-      // Si no, muestra el userId
-      const emailEl = document.getElementById('burger-email');
-      if (emailEl) emailEl.textContent = payload.email || `Usuario #${payload.userId}`;
-    } catch (e) {}
-  }
-});
-
-// ==================
 //  INICIO
 // ==================
+function initApp() {
+  loadExpenses();
+  loadIncome();
+  loadResumen();
+  loadMetas();
+}
+
 loadExpenses();
 loadIncome();
 loadResumen();

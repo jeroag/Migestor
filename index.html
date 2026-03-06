@@ -53,7 +53,26 @@
   </div>
 </div>
     <div class="wrapper">
+<div class="burger-menu" id="burger-menu" style="display:none">
+  <button class="burger-btn" onclick="toggleBurger()" aria-label="Menú">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <div class="burger-dropdown" id="burger-dropdown">
+    <div class="burger-user">
+      <span class="burger-user-label">SESIÓN ACTIVA</span>
+      <span class="burger-user-email" id="burger-email">—</span>
+    </div>
+    <div class="burger-divider"></div>
+    <button class="burger-item burger-logout" onclick="logout()">
+      <span class="burger-item-icon">⏻</span>
+      CERRAR SESIÓN
+    </button>
+  </div>
+</div>
 
+<div class="wrapper">
       <!-- HEADER -->
       <header>
         <div class="logo-block">

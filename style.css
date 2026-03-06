@@ -956,3 +956,9 @@ body.not-logged-in .wrapper {
   font-size: 1rem;
   line-height: 1;
 }
+#burger-menu {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+}
