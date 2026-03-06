@@ -1099,3 +1099,122 @@ input::placeholder { color: var(--ink-light); }
   .field-row { grid-template-columns: 1fr; }
   .main { padding: 80px 16px 40px; }
 }
+
+/* ============================================================
+   PRESUPUESTOS
+   ============================================================ */
+.panel-month {
+  font-size: 0.8rem;
+  color: var(--ink-light);
+  font-weight: 400;
+  text-transform: capitalize;
+}
+
+.presupuestos-list {
+  padding: 12px 0 8px;
+}
+
+.presupuesto-item {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.12s;
+}
+
+.presupuesto-item:last-child { border-bottom: none; }
+.presupuesto-item:hover { background: var(--bg); }
+
+.pres-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 12px;
+}
+
+.pres-cat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.pres-cat-icon {
+  width: 30px;
+  height: 30px;
+  background: var(--bg-subtle);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  flex-shrink: 0;
+}
+
+.pres-amounts {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.pres-gastado {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+.pres-limite-txt {
+  font-size: 0.78rem;
+  color: var(--ink-light);
+}
+
+.pres-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pres-bar {
+  flex: 1;
+  height: 7px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.pres-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pres-bar-fill.ok      { background: linear-gradient(90deg, var(--green-light), var(--green)); }
+.pres-bar-fill.warning { background: linear-gradient(90deg, #f0a500, var(--amber)); }
+.pres-bar-fill.danger  { background: linear-gradient(90deg, #e05a47, var(--red)); }
+
+.pres-pct {
+  font-size: 0.75rem;
+  font-weight: 600;
+  min-width: 36px;
+  text-align: right;
+}
+
+.pres-pct.ok      { color: var(--green); }
+.pres-pct.warning { color: var(--amber); }
+.pres-pct.danger  { color: var(--red); }
+
+.pres-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.pres-empty {
+  padding: 40px 24px;
+  text-align: center;
+  color: var(--ink-light);
+  font-size: 0.88rem;
+  font-style: italic;
+}

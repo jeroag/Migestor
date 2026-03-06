@@ -308,6 +308,77 @@ app.delete("/api/metas/:id", authMiddleware, async (req, res) => {
   }
 });
 
+// ==========================
+//  RUTAS DE PRESUPUESTOS
+// ==========================
+
+app.get("/api/presupuestos", authMiddleware, async (req, res) => {
+  const userId = req.user.userId;
+  const now = new Date();
+  const mes = now.getMonth() + 1;
+  const anio = now.getFullYear();
+  try {
+    // Devuelve cada presupuesto junto con lo gastado en el mes actual
+    const rows = await sql`
+      SELECT
+        p.id,
+        p.categoria,
+        p.limite,
+        COALESCE(SUM(g.monto), 0) AS gastado_mes
+      FROM presupuestos p
+      LEFT JOIN gastos g
+        ON g.categoria = p.categoria
+        AND g.usuario_id = p.usuario_id
+        AND EXTRACT(MONTH FROM g.fecha) = ${mes}
+        AND EXTRACT(YEAR  FROM g.fecha) = ${anio}
+      WHERE p.usuario_id = ${userId}
+      GROUP BY p.id, p.categoria, p.limite
+      ORDER BY p.categoria ASC
+    `;
+    res.json(rows.map(r => ({
+      id: r.id,
+      categoria: r.categoria,
+      limite: parseFloat(r.limite),
+      gastado_mes: parseFloat(r.gastado_mes)
+    })));
+  } catch (error) {
+    console.error("Error en GET /api/presupuestos:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/api/presupuestos", authMiddleware, async (req, res) => {
+  const userId = req.user.userId;
+  const { categoria, limite } = req.body;
+  if (!categoria || !limite) {
+    return res.status(400).json({ error: "Faltan campos obligatorios" });
+  }
+  try {
+    // Si ya existe un presupuesto para esa categoría, lo actualiza
+    await sql`
+      INSERT INTO presupuestos (usuario_id, categoria, limite)
+      VALUES (${userId}, ${categoria}, ${parseFloat(limite)})
+      ON CONFLICT (usuario_id, categoria)
+      DO UPDATE SET limite = ${parseFloat(limite)}
+    `;
+    res.status(201).json({ mensaje: "Presupuesto guardado" });
+  } catch (error) {
+    console.error("Error en POST /api/presupuestos:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete("/api/presupuestos/:id", authMiddleware, async (req, res) => {
+  const userId = req.user.userId;
+  const { id } = req.params;
+  try {
+    await sql`DELETE FROM presupuestos WHERE id = ${id} AND usuario_id = ${userId}`;
+    res.json({ mensaje: "Presupuesto eliminado" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // --- PUERTO ---
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {

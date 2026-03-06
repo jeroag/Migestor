@@ -513,4 +513,103 @@ function initApp() {
   loadIncome();
   loadResumen();
   loadMetas();
+  loadPresupuestos();
+}
+
+// ==================
+//  PRESUPUESTOS
+// ==================
+const MESES_ES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+
+document.getElementById("presupuesto-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const btn = e.target.querySelector("button[type=submit]");
+  btn.textContent = "Guardando...";
+  btn.disabled = true;
+  const data = {
+    categoria: document.getElementById("pres-categoria").value,
+    limite: parseFloat(document.getElementById("pres-limite").value),
+  };
+  try {
+    const res = await fetch(`${API}/presupuestos`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (res.ok) {
+      e.target.reset();
+      loadPresupuestos();
+    } else {
+      const err = await res.json();
+      alert("Error: " + err.error);
+    }
+  } catch (error) {
+    alert("No se pudo conectar con el servidor.");
+  } finally {
+    btn.textContent = "Guardar presupuesto";
+    btn.disabled = false;
+  }
+});
+
+async function loadPresupuestos() {
+  // Mostrar mes actual en el header
+  const now = new Date();
+  const mesLabel = document.getElementById("pres-mes");
+  if (mesLabel) mesLabel.textContent = `${MESES_ES[now.getMonth()]} ${now.getFullYear()}`;
+
+  try {
+    const res = await fetch(`${API}/presupuestos`, { headers: authHeaders() });
+    const data = await res.json();
+    const container = document.getElementById("presupuestos-list");
+    if (!container) return;
+
+    if (!data.length) {
+      container.innerHTML = '<p class="pres-empty">No hay presupuestos definidos aún.<br>Añade uno para empezar a controlar tus categorías.</p>';
+      return;
+    }
+
+    container.innerHTML = data.map(p => {
+      const gastado = parseFloat(p.gastado_mes) || 0;
+      const limite = parseFloat(p.limite);
+      const pct = Math.min((gastado / limite) * 100, 100).toFixed(0);
+      const estado = pct >= 100 ? "danger" : pct >= 75 ? "warning" : "ok";
+      const icon = CAT_ICONS[p.categoria] || "📦";
+      return `
+        <div class="presupuesto-item">
+          <div class="pres-header">
+            <div class="pres-cat">
+              <div class="pres-cat-icon">${icon}</div>
+              ${p.categoria}
+            </div>
+            <div class="pres-amounts">
+              <span class="pres-gastado">$${gastado.toFixed(2)}</span>
+              <span class="pres-limite-txt">/ $${limite.toFixed(2)}</span>
+            </div>
+          </div>
+          <div class="pres-bar-wrap">
+            <div class="pres-bar">
+              <div class="pres-bar-fill ${estado}" style="width:${pct}%"></div>
+            </div>
+            <span class="pres-pct ${estado}">${pct}%</span>
+          </div>
+          <div class="pres-actions">
+            <button type="button" class="btn-delete" onclick="deletePresupuesto(${p.id})" title="Eliminar">✕</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+  } catch (error) {
+    console.error("Error cargando presupuestos:", error);
+  }
+}
+
+async function deletePresupuesto(id) {
+  showModal("¿Eliminar este presupuesto?", async () => {
+    try {
+      await fetch(`${API}/presupuestos/${id}`, { method: "DELETE", headers: authHeaders() });
+      loadPresupuestos();
+    } catch (error) {
+      alert("Error al eliminar el presupuesto.");
+    }
+  });
 }
