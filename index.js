@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const sql = require("./src/db");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 require("dotenv").config();
 
 const app = express();
@@ -10,11 +12,46 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname));
 
+// --- MIDDLEWARE JWT ---
+function authMiddleware(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "No autorizado" });
+  }
+  const token = authHeader.split(" ")[1];
+  try {
+    req.user = jwt.verify(token, process.env.JWT_SECRET);
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: "Token inválido o expirado" });
+  }
+}
+
+// ==================
+//  LOGIN (pública)
+// ==================
+
+app.post("/api/login", async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const [user] = await sql`SELECT * FROM usuarios WHERE email = ${email}`;
+    if (user && await bcrypt.compare(password, user.password)) {
+      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+      res.json({ token, user: { nombre: user.nombre } });
+    } else {
+      res.status(401).json({ error: "Credenciales inválidas" });
+    }
+  } catch (error) {
+    console.error("Error en POST /api/login:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // ==================
 //  RUTAS DE GASTOS
 // ==================
 
-app.get("/api/gastos", async (req, res) => {
+app.get("/api/gastos", authMiddleware, async (req, res) => {
   try {
     const rows = await sql`SELECT * FROM gastos ORDER BY fecha DESC`;
     res.json(rows);
@@ -24,7 +61,7 @@ app.get("/api/gastos", async (req, res) => {
   }
 });
 
-app.post("/api/gastos", async (req, res) => {
+app.post("/api/gastos", authMiddleware, async (req, res) => {
   const { descripcion, monto, categoria } = req.body;
   if (!descripcion || !monto || !categoria) {
     return res.status(400).json({ error: "Faltan campos obligatorios" });
@@ -38,7 +75,7 @@ app.post("/api/gastos", async (req, res) => {
   }
 });
 
-app.delete("/api/gastos/:id", async (req, res) => {
+app.delete("/api/gastos/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
   try {
     await sql`DELETE FROM gastos WHERE id = ${id}`;
@@ -52,7 +89,7 @@ app.delete("/api/gastos/:id", async (req, res) => {
 //  RUTAS DE INGRESOS
 // ==================
 
-app.get("/api/ingresos", async (req, res) => {
+app.get("/api/ingresos", authMiddleware, async (req, res) => {
   try {
     const rows = await sql`SELECT * FROM ingresos ORDER BY fecha DESC`;
     res.json(rows);
@@ -62,7 +99,7 @@ app.get("/api/ingresos", async (req, res) => {
   }
 });
 
-app.post("/api/ingresos", async (req, res) => {
+app.post("/api/ingresos", authMiddleware, async (req, res) => {
   const { descripcion, monto, categoria } = req.body;
   if (!descripcion || !monto || !categoria) {
     return res.status(400).json({ error: "Faltan campos obligatorios" });
@@ -76,7 +113,7 @@ app.post("/api/ingresos", async (req, res) => {
   }
 });
 
-app.delete("/api/ingresos/:id", async (req, res) => {
+app.delete("/api/ingresos/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
   try {
     await sql`DELETE FROM ingresos WHERE id = ${id}`;
@@ -90,7 +127,7 @@ app.delete("/api/ingresos/:id", async (req, res) => {
 //  RESUMEN / BALANCE
 // ==================
 
-app.get("/api/resumen", async (req, res) => {
+app.get("/api/resumen", authMiddleware, async (req, res) => {
   try {
     const [{ total_gastos }] =
       await sql`SELECT COALESCE(SUM(monto), 0) AS total_gastos FROM gastos`;
@@ -111,7 +148,7 @@ app.get("/api/resumen", async (req, res) => {
 //  DATOS PARA GRÁFICOS
 // ==================
 
-app.get("/api/graficos", async (req, res) => {
+app.get("/api/graficos", authMiddleware, async (req, res) => {
   try {
     const gastosPorCategoria = await sql`
       SELECT categoria, COALESCE(SUM(monto), 0) AS total
@@ -175,7 +212,7 @@ app.get("/api/graficos", async (req, res) => {
 //  RUTAS DE METAS DE AHORRO
 // ========================
 
-app.get("/api/metas", async (req, res) => {
+app.get("/api/metas", authMiddleware, async (req, res) => {
   try {
     const rows = await sql`SELECT * FROM metas ORDER BY fecha_creacion DESC`;
     res.json(rows);
@@ -185,7 +222,7 @@ app.get("/api/metas", async (req, res) => {
   }
 });
 
-app.post("/api/metas", async (req, res) => {
+app.post("/api/metas", authMiddleware, async (req, res) => {
   const { nombre, monto_objetivo, monto_actual } = req.body;
   if (!nombre || !monto_objetivo) {
     return res.status(400).json({ error: "Faltan campos obligatorios" });
@@ -202,7 +239,7 @@ app.post("/api/metas", async (req, res) => {
   }
 });
 
-app.patch("/api/metas/:id/abonar", async (req, res) => {
+app.patch("/api/metas/:id/abonar", authMiddleware, async (req, res) => {
   const { id } = req.params;
   const { monto } = req.body;
   if (!monto || parseFloat(monto) <= 0) {
@@ -221,7 +258,7 @@ app.patch("/api/metas/:id/abonar", async (req, res) => {
   }
 });
 
-app.delete("/api/metas/:id", async (req, res) => {
+app.delete("/api/metas/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
   try {
     await sql`DELETE FROM metas WHERE id = ${id}`;
@@ -235,20 +272,4 @@ app.delete("/api/metas/:id", async (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Servidor activo en puerto ${PORT}`);
-});
-
-// Necesitarás instalar: npm install bcryptjs jsonwebtoken
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-
-app.post("/api/login", async (req, res) => {
-  const { email, password } = req.body;
-  const [user] = await sql`SELECT * FROM usuarios WHERE email = ${email}`;
-  
-  if (user && await bcrypt.compare(password, user.password)) {
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
-    res.json({ token, user: { nombre: user.nombre } });
-  } else {
-    res.status(401).json({ error: "Credenciales inválidas" });
-  }
 });

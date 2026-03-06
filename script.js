@@ -1,6 +1,17 @@
 const API = "https://migestor-production.up.railway.app/api";
 
 // ==================
+//  HELPER AUTH
+// ==================
+function authHeaders() {
+  const token = localStorage.getItem("auth_token");
+  return {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`
+  };
+}
+
+// ==================
 //  MODAL
 // ==================
 let _modalCallback = null;
@@ -91,7 +102,7 @@ function switchTab(tab) {
 // ==================
 async function loadResumen() {
   try {
-    const res = await fetch(`${API}/resumen`);
+    const res = await fetch(`${API}/resumen`, { headers: authHeaders() });
     const data = await res.json();
     document.getElementById("total-ingresos").textContent = `$${data.total_ingresos.toFixed(2)}`;
     document.getElementById("total-gastos").textContent = `$${data.total_gastos.toFixed(2)}`;
@@ -118,7 +129,7 @@ document.getElementById("expense-form").addEventListener("submit", async (e) => 
   try {
     const res = await fetch(`${API}/gastos`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders(),
       body: JSON.stringify(data),
     });
     if (res.ok) {
@@ -136,7 +147,7 @@ document.getElementById("expense-form").addEventListener("submit", async (e) => 
 
 async function loadExpenses() {
   try {
-    const res = await fetch(`${API}/gastos`);
+    const res = await fetch(`${API}/gastos`, { headers: authHeaders() });
     const gastos = await res.json();
     const list = document.getElementById("expenses-list");
     if (gastos.length === 0) {
@@ -163,7 +174,7 @@ async function loadExpenses() {
 async function deleteGasto(id) {
   showModal("¿Eliminar este gasto?", async () => {
     try {
-      await fetch(`${API}/gastos/${id}`, { method: "DELETE" });
+      await fetch(`${API}/gastos/${id}`, { method: "DELETE", headers: authHeaders() });
       loadExpenses();
       loadResumen();
     } catch (error) {
@@ -185,7 +196,7 @@ document.getElementById("income-form").addEventListener("submit", async (e) => {
   try {
     const res = await fetch(`${API}/ingresos`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders(),
       body: JSON.stringify(data),
     });
     if (res.ok) {
@@ -203,7 +214,7 @@ document.getElementById("income-form").addEventListener("submit", async (e) => {
 
 async function loadIncome() {
   try {
-    const res = await fetch(`${API}/ingresos`);
+    const res = await fetch(`${API}/ingresos`, { headers: authHeaders() });
     const ingresos = await res.json();
     const list = document.getElementById("income-list");
     if (!ingresos || ingresos.length === 0) {
@@ -230,7 +241,7 @@ async function loadIncome() {
 async function deleteIngreso(id) {
   showModal("¿Eliminar este ingreso?", async () => {
     try {
-      await fetch(`${API}/ingresos/${id}`, { method: "DELETE" });
+      await fetch(`${API}/ingresos/${id}`, { method: "DELETE", headers: authHeaders() });
       loadIncome();
       loadResumen();
     } catch (error) {
@@ -252,7 +263,7 @@ document.getElementById("meta-form").addEventListener("submit", async (e) => {
   try {
     const res = await fetch(`${API}/metas`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders(),
       body: JSON.stringify(data),
     });
     if (res.ok) {
@@ -269,7 +280,7 @@ document.getElementById("meta-form").addEventListener("submit", async (e) => {
 
 async function loadMetas() {
   try {
-    const res = await fetch(`${API}/metas`);
+    const res = await fetch(`${API}/metas`, { headers: authHeaders() });
     const metas = await res.json();
     const container = document.getElementById("metas-list");
     if (!metas || metas.length === 0) {
@@ -319,7 +330,7 @@ async function abonarMeta(id) {
   try {
     const res = await fetch(`${API}/metas/${id}/abonar`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders(),
       body: JSON.stringify({ monto }),
     });
     if (res.ok) {
@@ -336,7 +347,7 @@ async function abonarMeta(id) {
 async function deleteMeta(id) {
   showModal("¿Eliminar esta meta de ahorro?", async () => {
     try {
-      await fetch(`${API}/metas/${id}`, { method: "DELETE" });
+      await fetch(`${API}/metas/${id}`, { method: "DELETE", headers: authHeaders() });
       loadMetas();
     } catch (error) {
       alert("Error al eliminar la meta.");
@@ -358,7 +369,7 @@ function destroyChart(instance) {
 
 async function loadGraficos() {
   try {
-    const res = await fetch(`${API}/graficos`);
+    const res = await fetch(`${API}/graficos`, { headers: authHeaders() });
     const data = await res.json();
 
     // --- Gastos por categoría (Doughnut) ---
