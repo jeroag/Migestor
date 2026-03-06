@@ -6,6 +6,27 @@
     <title>MIGESTOR · Control Financiero</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css" />
+    <!-- PEGA ESTO DENTRO DEL <header>, JUSTO ANTES DEL </header> -->
+
+<!-- MENÚ BURGER -->
+<div class="burger-menu">
+  <button class="burger-btn" onclick="toggleBurger()" aria-label="Menú">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <div class="burger-dropdown" id="burger-dropdown">
+    <div class="burger-user">
+      <span class="burger-user-label">SESIÓN ACTIVA</span>
+      <span class="burger-user-email" id="burger-email">—</span>
+    </div>
+    <div class="burger-divider"></div>
+    <button class="burger-item burger-logout" onclick="logout()">
+      <span class="burger-item-icon">⏻</span>
+      CERRAR SESIÓN
+    </button>
+  </div>
+</div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>

@@ -512,6 +512,40 @@ function renderPresupuestos(presupuestos, gastos) {
 }
 
 // ==================
+//  BURGER MENU
+// ==================
+function toggleBurger() {
+  const btn = document.querySelector('.burger-btn');
+  const dropdown = document.getElementById('burger-dropdown');
+  btn.classList.toggle('active');
+  dropdown.classList.toggle('open');
+}
+
+// Cierra el menú si haces clic fuera
+document.addEventListener('click', (e) => {
+  const menu = document.querySelector('.burger-menu');
+  if (menu && !menu.contains(e.target)) {
+    document.querySelector('.burger-btn').classList.remove('active');
+    document.getElementById('burger-dropdown').classList.remove('open');
+  }
+});
+
+// Muestra el email del usuario en el menú
+document.addEventListener('DOMContentLoaded', () => {
+  // Descodifica el token JWT para obtener el email (sin librerías)
+  const token = localStorage.getItem('auth_token');
+  if (token) {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      // Si guardas el email en el token, úsalo aquí
+      // Si no, muestra el userId
+      const emailEl = document.getElementById('burger-email');
+      if (emailEl) emailEl.textContent = payload.email || `Usuario #${payload.userId}`;
+    } catch (e) {}
+  }
+});
+
+// ==================
 //  INICIO
 // ==================
 loadExpenses();

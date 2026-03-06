@@ -807,3 +807,152 @@ body.not-logged-in .wrapper {
   outline: none;
   border-color: var(--accent);
 }
+
+/* ==================
+   BURGER MENU
+================== */
+.burger-menu {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.burger-btn {
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0;
+  transition: border-color 0.15s;
+  border-radius: 0;
+  flex-shrink: 0;
+}
+
+.burger-btn:hover {
+  border-color: var(--accent);
+}
+
+.burger-btn span {
+  display: block;
+  width: 16px;
+  height: 1.5px;
+  background: var(--text-dim);
+  transition: background 0.15s, transform 0.2s, opacity 0.2s;
+}
+
+.burger-btn:hover span {
+  background: var(--accent);
+}
+
+/* Animación activo */
+.burger-btn.active span:nth-child(1) {
+  transform: translateY(6.5px) rotate(45deg);
+  background: var(--accent);
+}
+.burger-btn.active span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.burger-btn.active span:nth-child(3) {
+  transform: translateY(-6.5px) rotate(-45deg);
+  background: var(--accent);
+}
+
+/* Dropdown */
+.burger-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 220px;
+  background: var(--dark2);
+  border: 1px solid var(--border-bright);
+  z-index: 500;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-6px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.burger-dropdown::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+
+.burger-dropdown.open {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
+
+.burger-user {
+  padding: 14px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.burger-user-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--text-dim);
+  letter-spacing: 0.2em;
+}
+
+.burger-user-email {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.burger-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0 16px;
+}
+
+.burger-item {
+  width: 100%;
+  padding: 13px 16px;
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-size: 0.82rem;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  transition: color 0.15s, background 0.15s;
+  border-radius: 0;
+  margin: 0;
+}
+
+.burger-item:hover {
+  color: var(--text-bright);
+  background: var(--dark4);
+}
+
+.burger-logout:hover {
+  color: var(--red);
+  background: rgba(248, 113, 113, 0.06);
+}
+
+.burger-item-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
