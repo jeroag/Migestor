@@ -1,242 +1,312 @@
-<<!doctype html>
+<!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MIGESTOR · Control Financiero</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css" />
-    <!-- PEGA ESTO DENTRO DEL <header>, JUSTO ANTES DEL </header> -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MiGestor · Finanzas Personales</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
 
-<!-- MENÚ BURGER -->
-<div class="burger-menu">
-  <button class="burger-btn" onclick="toggleBurger()" aria-label="Menú">
-    <span></span>
-    <span></span>
-    <span></span>
-  </button>
-  <div class="burger-dropdown" id="burger-dropdown">
-    <div class="burger-user">
-      <span class="burger-user-label">SESIÓN ACTIVA</span>
-      <span class="burger-user-email" id="burger-email">—</span>
-    </div>
-    <div class="burger-divider"></div>
-    <button class="burger-item burger-logout" onclick="logout()">
-      <span class="burger-item-icon">⏻</span>
-      CERRAR SESIÓN
-    </button>
-  </div>
-</div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  </head>
-  <body>
-    <div id="auth-overlay" class="auth-overlay">
-  <div class="auth-box">
-    <div class="logo-text" style="margin-bottom: 2rem; text-align: center;">
-      <h1>MI<span>GESTOR</span></h1>
-      <p>ACCESO AL SISTEMA</p>
-    </div>
-    <form id="login-form">
-      <div class="form-group">
-        <label>EMAIL</label>
-        <input type="email" id="login-email" placeholder="usuario@ejemplo.com" required>
+  <!-- AUTH SCREEN -->
+  <div id="auth-overlay" class="auth-overlay">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="auth-logo-mark">M</div>
+        <div>
+          <div class="auth-logo-name">MiGestor</div>
+          <div class="auth-logo-sub">Control financiero personal</div>
+        </div>
       </div>
-      <div class="form-group">
-        <label>CONTRASEÑA</label>
-        <input type="password" id="login-password" placeholder="••••••••" required>
-      </div>
-      <button type="submit" class="btn-add" style="width: 100%; margin-top: 1rem;">INGRESAR</button>
-      <p id="login-error" style="color: var(--red); font-size: 0.8rem; margin-top: 10px; display: none; text-align: center;">
-        Credenciales incorrectas
-      </p>
-    </form>
-  </div>
-</div>
-    <div class="wrapper">
-<div class="burger-menu" id="burger-menu" style="display:none">
-  <button class="burger-btn" onclick="toggleBurger()" aria-label="Menú">
-    <span></span>
-    <span></span>
-    <span></span>
-  </button>
-  <div class="burger-dropdown" id="burger-dropdown">
-    <div class="burger-user">
-      <span class="burger-user-label">SESIÓN ACTIVA</span>
-      <span class="burger-user-email" id="burger-email">—</span>
+      <h2 class="auth-title">Bienvenido de vuelta</h2>
+      <p class="auth-desc">Accede a tu panel financiero</p>
+      <form id="login-form" class="auth-form">
+        <div class="auth-field">
+          <label>Correo electrónico</label>
+          <input type="email" id="login-email" placeholder="tú@ejemplo.com" required>
+        </div>
+        <div class="auth-field">
+          <label>Contraseña</label>
+          <input type="password" id="login-password" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="auth-btn">Entrar</button>
+        <p id="login-error" class="auth-error">Credenciales incorrectas. Inténtalo de nuevo.</p>
+      </form>
     </div>
-    <div class="burger-divider"></div>
-    <button class="burger-item burger-logout" onclick="logout()">
-      <span class="burger-item-icon">⏻</span>
-      CERRAR SESIÓN
-    </button>
+    <div class="auth-visual">
+      <div class="auth-visual-inner">
+        <div class="av-quote">"El primer paso hacia la libertad financiera es saber exactamente dónde estás."</div>
+        <div class="av-circles">
+          <div class="avc avc-1"></div>
+          <div class="avc avc-2"></div>
+          <div class="avc avc-3"></div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 
-<div class="wrapper">
-      <!-- HEADER -->
-      <header>
-        <div class="logo-block">
-          <div class="logo-text">
-            <h1>MI<span>GESTOR</span></h1>
-            <p>FINANCIAL CONTROL SYSTEM · v1.0</p>
+  <!-- APP -->
+  <div class="app" id="app" style="display:none">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-mark">M</div>
+        <span>MiGestor</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" onclick="switchTab('gastos')" data-tab="gastos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          <span>Gastos</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('ingresos')" data-tab="ingresos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <span>Ingresos</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('metas')" data-tab="metas">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <span>Metas</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('graficos')" data-tab="graficos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span>Gráficos</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-avatar" id="sidebar-avatar">U</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name" id="sidebar-name">Usuario</div>
+            <div class="sidebar-user-role">Cuenta personal</div>
           </div>
         </div>
-        <div class="header-badge">
-          <span id="hb-balance">BALANCE —</span>
-          ESTADO DEL SISTEMA
-        </div>
-      </header>
+        <button class="sidebar-logout" onclick="logout()" title="Cerrar sesión">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </aside>
 
-      <!-- RESUMEN -->
-      <div class="resumen">
-        <div class="resumen-item">
-          <div class="resumen-label">INGRESOS TOTALES</div>
-          <div class="resumen-value green" id="total-ingresos">$0.00</div>
+    <!-- MOBILE TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-logo">
+        <div class="sidebar-logo-mark small">M</div>
+        <span>MiGestor</span>
+      </div>
+      <button class="hamburger" onclick="toggleSidebar()" id="hamburger">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+      <!-- RESUMEN CARDS -->
+      <div class="summary-bar">
+        <div class="summary-card summary-income">
+          <div class="sc-label">Ingresos totales</div>
+          <div class="sc-value" id="total-ingresos">$0.00</div>
+          <div class="sc-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          </div>
         </div>
-        <div class="resumen-item">
-          <div class="resumen-label">GASTOS TOTALES</div>
-          <div class="resumen-value red" id="total-gastos">$0.00</div>
+        <div class="summary-card summary-expense">
+          <div class="sc-label">Gastos totales</div>
+          <div class="sc-value" id="total-gastos">$0.00</div>
+          <div class="sc-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+          </div>
         </div>
-        <div class="resumen-item highlight">
-          <div class="resumen-label">BALANCE NETO</div>
-          <div class="resumen-value orange" id="balance">$0.00</div>
+        <div class="summary-card summary-balance">
+          <div class="sc-label">Balance neto</div>
+          <div class="sc-value" id="balance">$0.00</div>
+          <div class="sc-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
         </div>
       </div>
 
-      <!-- PESTAÑAS -->
-      <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('gastos')">GASTOS</button>
-        <button class="tab-btn" onclick="switchTab('ingresos')">INGRESOS</button>
-        <button class="tab-btn" onclick="switchTab('metas')">METAS</button>
-        <button class="tab-btn" onclick="switchTab('graficos')">GRÁFICOS</button>
-      </div>
-
-      <!-- PESTAÑA GASTOS -->
+      <!-- GASTOS -->
       <div id="tab-gastos" class="tab-content active">
-        <div class="card">
-          <div class="card-title">REGISTRAR GASTO</div>
-          <form id="expense-form">
-            <div class="field">
-              <label>DESCRIPCIÓN</label>
-              <input type="text" id="desc" placeholder="¿En qué gastaste?" required />
-            </div>
-            <div class="field">
-              <label>MONTO ($)</label>
-              <input type="number" id="amount" placeholder="0.00" step="0.01" min="0.01" required />
-            </div>
-            <div class="field">
-              <label>CATEGORÍA</label>
-              <select id="cat">
-                <option value="Comida">Comida</option>
-                <option value="Transporte">Transporte</option>
-                <option value="Ocio">Ocio</option>
-                <option value="Renta">Renta</option>
-                <option value="Salud">Salud</option>
-                <option value="Educación">Educación</option>
-                <option value="Ropa">Ropa</option>
-                <option value="Suscripciones">Suscripciones</option>
-                <option value="Otros">Otros</option>
-              </select>
-            </div>
-            <button type="submit">+ AÑADIR GASTO</button>
-          </form>
+        <div class="page-header">
+          <h1 class="page-title">Gastos</h1>
+          <p class="page-sub">Registra y controla tus egresos</p>
         </div>
-        <div class="card" style="margin-top:16px">
-          <div class="card-title">MOVIMIENTOS RECIENTES</div>
-          <ul id="expenses-list"></ul>
+        <div class="content-grid">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Nuevo gasto</h3>
+            </div>
+            <form id="expense-form" class="form">
+              <div class="field">
+                <label>Descripción</label>
+                <input type="text" id="desc" placeholder="¿En qué gastaste?" required />
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label>Monto ($)</label>
+                  <input type="number" id="amount" placeholder="0.00" step="0.01" min="0.01" required />
+                </div>
+                <div class="field">
+                  <label>Categoría</label>
+                  <select id="cat">
+                    <option value="Comida">Comida</option>
+                    <option value="Transporte">Transporte</option>
+                    <option value="Ocio">Ocio</option>
+                    <option value="Renta">Renta</option>
+                    <option value="Salud">Salud</option>
+                    <option value="Educación">Educación</option>
+                    <option value="Ropa">Ropa</option>
+                    <option value="Suscripciones">Suscripciones</option>
+                    <option value="Otros">Otros</option>
+                  </select>
+                </div>
+              </div>
+              <button type="submit" class="btn-primary">Añadir gasto</button>
+            </form>
+          </div>
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Movimientos recientes</h3>
+            </div>
+            <ul id="expenses-list" class="tx-list"></ul>
+          </div>
         </div>
       </div>
 
-      <!-- PESTAÑA INGRESOS -->
+      <!-- INGRESOS -->
       <div id="tab-ingresos" class="tab-content">
-        <div class="card">
-          <div class="card-title">REGISTRAR INGRESO</div>
-          <form id="income-form">
-            <div class="field">
-              <label>DESCRIPCIÓN</label>
-              <input type="text" id="inc-desc" placeholder="¿De dónde viene?" required />
-            </div>
-            <div class="field">
-              <label>MONTO ($)</label>
-              <input type="number" id="inc-amount" placeholder="0.00" step="0.01" min="0.01" required />
-            </div>
-            <div class="field">
-              <label>CATEGORÍA</label>
-              <select id="inc-cat">
-                <option value="Salario">Salario</option>
-                <option value="Freelance">Freelance</option>
-                <option value="Inversión">Inversión</option>
-                <option value="Regalo">Regalo</option>
-                <option value="Bono">Bono</option>
-                <option value="Alquiler">Alquiler</option>
-                <option value="Otros">Otros</option>
-              </select>
-            </div>
-            <button type="submit">+ AÑADIR INGRESO</button>
-          </form>
+        <div class="page-header">
+          <h1 class="page-title">Ingresos</h1>
+          <p class="page-sub">Registra todas tus fuentes de ingreso</p>
         </div>
-        <div class="card" style="margin-top:16px">
-          <div class="card-title">INGRESOS RECIENTES</div>
-          <ul id="income-list"></ul>
+        <div class="content-grid">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Nuevo ingreso</h3>
+            </div>
+            <form id="income-form" class="form">
+              <div class="field">
+                <label>Descripción</label>
+                <input type="text" id="inc-desc" placeholder="¿De dónde viene?" required />
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label>Monto ($)</label>
+                  <input type="number" id="inc-amount" placeholder="0.00" step="0.01" min="0.01" required />
+                </div>
+                <div class="field">
+                  <label>Categoría</label>
+                  <select id="inc-cat">
+                    <option value="Salario">Salario</option>
+                    <option value="Freelance">Freelance</option>
+                    <option value="Inversión">Inversión</option>
+                    <option value="Regalo">Regalo</option>
+                    <option value="Bono">Bono</option>
+                    <option value="Alquiler">Alquiler</option>
+                    <option value="Otros">Otros</option>
+                  </select>
+                </div>
+              </div>
+              <button type="submit" class="btn-primary">Añadir ingreso</button>
+            </form>
+          </div>
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Ingresos recientes</h3>
+            </div>
+            <ul id="income-list" class="tx-list"></ul>
+          </div>
         </div>
       </div>
 
-      <!-- PESTAÑA METAS -->
+      <!-- METAS -->
       <div id="tab-metas" class="tab-content">
-        <div class="card">
-          <div class="card-title">NUEVA META DE AHORRO</div>
-          <form id="meta-form">
-            <div class="field">
-              <label>NOMBRE DE LA META</label>
-              <input type="text" id="meta-nombre" placeholder="Ej: Vacaciones, Fondo emergencia..." required />
-            </div>
-            <div class="field">
-              <label>OBJETIVO ($)</label>
-              <input type="number" id="meta-objetivo" placeholder="0.00" step="0.01" min="1" required />
-            </div>
-            <div class="field">
-              <label>YA AHORRADO ($) — OPCIONAL</label>
-              <input type="number" id="meta-inicial" placeholder="0.00" step="0.01" min="0" />
-            </div>
-            <button type="submit">+ CREAR META</button>
-          </form>
+        <div class="page-header">
+          <h1 class="page-title">Metas de ahorro</h1>
+          <p class="page-sub">Define y sigue tus objetivos financieros</p>
         </div>
-        <div class="card" style="margin-top:16px">
-          <div class="card-title">MIS METAS</div>
-          <div id="metas-list"></div>
+        <div class="content-grid">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Nueva meta</h3>
+            </div>
+            <form id="meta-form" class="form">
+              <div class="field">
+                <label>Nombre de la meta</label>
+                <input type="text" id="meta-nombre" placeholder="Ej: Vacaciones, Fondo emergencia…" required />
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label>Objetivo ($)</label>
+                  <input type="number" id="meta-objetivo" placeholder="0.00" step="0.01" min="1" required />
+                </div>
+                <div class="field">
+                  <label>Ya ahorrado ($)</label>
+                  <input type="number" id="meta-inicial" placeholder="0.00" step="0.01" min="0" />
+                </div>
+              </div>
+              <button type="submit" class="btn-primary">Crear meta</button>
+            </form>
+          </div>
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Mis metas</h3>
+            </div>
+            <div id="metas-list" class="metas-grid"></div>
+          </div>
         </div>
       </div>
 
-      <!-- PESTAÑA GRÁFICOS -->
+      <!-- GRAFICOS -->
       <div id="tab-graficos" class="tab-content">
-        <div class="card">
-          <div class="card-title">GASTOS POR CATEGORÍA</div>
-          <div class="chart-container"><canvas id="chart-gastos-cat"></canvas></div>
+        <div class="page-header">
+          <h1 class="page-title">Análisis</h1>
+          <p class="page-sub">Visualiza tus patrones financieros</p>
         </div>
-        <div class="card" style="margin-top:16px">
-          <div class="card-title">INGRESOS POR CATEGORÍA</div>
-          <div class="chart-container"><canvas id="chart-ingresos-cat"></canvas></div>
+        <div class="charts-grid">
+          <div class="panel">
+            <div class="panel-header"><h3>Gastos por categoría</h3></div>
+            <div class="chart-wrap"><canvas id="chart-gastos-cat"></canvas></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><h3>Ingresos por categoría</h3></div>
+            <div class="chart-wrap"><canvas id="chart-ingresos-cat"></canvas></div>
+          </div>
+          <div class="panel panel-wide">
+            <div class="panel-header">
+              <h3>Evolución mensual</h3>
+              <button class="btn-refresh" onclick="loadGraficos()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                Actualizar
+              </button>
+            </div>
+            <div class="chart-wrap chart-wrap--tall"><canvas id="chart-evolucion"></canvas></div>
+          </div>
         </div>
-        <div class="card" style="margin-top:16px">
-          <div class="card-title">EVOLUCIÓN MENSUAL</div>
-          <div class="chart-container chart-container--tall"><canvas id="chart-evolucion"></canvas></div>
-        </div>
-        <button class="btn-refresh" onclick="loadGraficos()">↺ ACTUALIZAR</button>
       </div>
 
-    </div>
+    </main>
+  </div>
 
-    <!-- MODAL -->
-    <div id="modal-overlay" class="modal-overlay" onclick="modalCancel()">
-      <div class="modal-box" onclick="event.stopPropagation()">
-        <p id="modal-msg" class="modal-msg">¿Estás seguro?</p>
-        <div class="modal-actions">
-          <button type="button" id="modal-cancel" onclick="modalCancel()">CANCELAR</button>
-          <button type="button" id="modal-confirm" onclick="modalConfirm()">ELIMINAR</button>
-        </div>
+  <!-- MODAL -->
+  <div id="modal-overlay" class="modal-overlay" onclick="modalCancel()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div class="modal-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <p id="modal-msg" class="modal-msg">¿Estás seguro?</p>
+      <p class="modal-sub">Esta acción no se puede deshacer.</p>
+      <div class="modal-actions">
+        <button type="button" id="modal-cancel" onclick="modalCancel()">Cancelar</button>
+        <button type="button" id="modal-confirm" onclick="modalConfirm()">Eliminar</button>
       </div>
     </div>
+  </div>
 
-    <script src="script.js"></script>
-  </body>
+  <script src="script.js"></script>
+</body>
 </html>
