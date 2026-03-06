@@ -13,6 +13,7 @@ app.use(express.json());
 app.use(express.static(__dirname));
 
 // --- MIDDLEWARE JWT ---
+// Ahora req.user.userId está disponible en todas las rutas protegidas
 function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -52,8 +53,13 @@ app.post("/api/login", async (req, res) => {
 // ==================
 
 app.get("/api/gastos", authMiddleware, async (req, res) => {
+  const userId = req.user.userId;
   try {
-    const rows = await sql`SELECT * FROM gastos ORDER BY fecha DESC`;
+    const rows = await sql`
+      SELECT * FROM gastos
+      WHERE usuario_id = ${userId}
+      ORDER BY fecha DESC
+    `;
     res.json(rows);
   } catch (error) {
     console.error("Error en GET /api/gastos:", error);
@@ -62,12 +68,16 @@ app.get("/api/gastos", authMiddleware, async (req, res) => {
 });
 
 app.post("/api/gastos", authMiddleware, async (req, res) => {
+  const userId = req.user.userId;
   const { descripcion, monto, categoria } = req.body;
   if (!descripcion || !monto || !categoria) {
     return res.status(400).json({ error: "Faltan campos obligatorios" });
   }
   try {
-    await sql`INSERT INTO gastos (descripcion, monto, categoria) VALUES (${descripcion}, ${parseFloat(monto)}, ${categoria})`;
+    await sql`
+      INSERT INTO gastos (descripcion, monto, categoria, usuario_id)
+      VALUES (${descripcion}, ${parseFloat(monto)}, ${categoria}, ${userId})
+    `;
     res.status(201).json({ mensaje: "Gasto guardado" });
   } catch (error) {
     console.error("Error en POST /api/gastos:", error);
@@ -76,9 +86,11 @@ app.post("/api/gastos", authMiddleware, async (req, res) => {
 });
 
 app.delete("/api/gastos/:id", authMiddleware, async (req, res) => {
+  const userId = req.user.userId;
   const { id } = req.params;
   try {
-    await sql`DELETE FROM gastos WHERE id = ${id}`;
+    // El WHERE usuario_id evita que alguien borre datos ajenos
+    await sql`DELETE FROM gastos WHERE id = ${id} AND usuario_id = ${userId}`;
     res.json({ mensaje: "Gasto eliminado" });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -90,8 +102,13 @@ app.delete("/api/gastos/:id", authMiddleware, async (req, res) => {
 // ==================
 
 app.get("/api/ingresos", authMiddleware, async (req, res) => {
+  const userId = req.user.userId;
   try {
-    const rows = await sql`SELECT * FROM ingresos ORDER BY fecha DESC`;
+    const rows = await sql`
+      SELECT * FROM ingresos
+      WHERE usuario_id = ${userId}
+      ORDER BY fecha DESC
+    `;
     res.json(rows);
   } catch (error) {
     console.error("Error en GET /api/ingresos:", error);
@@ -100,12 +117,16 @@ app.get("/api/ingresos", authMiddleware, async (req, res) => {
 });
 
 app.post("/api/ingresos", authMiddleware, async (req, res) => {
+  const userId = req.user.userId;
   const { descripcion, monto, categoria } = req.body;
   if (!descripcion || !monto || !categoria) {
     return res.status(400).json({ error: "Faltan campos obligatorios" });
   }
   try {
-    await sql`INSERT INTO ingresos (descripcion, monto, categoria) VALUES (${descripcion}, ${parseFloat(monto)}, ${categoria})`;
+    await sql`
+      INSERT INTO ingresos (descripcion, monto, categoria, usuario_id)
+      VALUES (${descripcion}, ${parseFloat(monto)}, ${categoria}, ${userId})
+    `;
     res.status(201).json({ mensaje: "Ingreso guardado" });
   } catch (error) {
     console.error("Error en POST /api/ingresos:", error);
@@ -114,9 +135,10 @@ app.post("/api/ingresos", authMiddleware, async (req, res) => {
 });
 
 app.delete("/api/ingresos/:id", authMiddleware, async (req, res) => {
+  const userId = req.user.userId;
   const { id } = req.params;
   try {
-    await sql`DELETE FROM ingresos WHERE id = ${id}`;
+    await sql`DELETE FROM ingresos WHERE id = ${id} AND usuario_id = ${userId}`;
     res.json({ mensaje: "Ingreso eliminado" });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -128,11 +150,18 @@ app.delete("/api/ingresos/:id", authMiddleware, async (req, res) => {
 // ==================
 
 app.get("/api/resumen", authMiddleware, async (req, res) => {
+  const userId = req.user.userId;
   try {
-    const [{ total_gastos }] =
-      await sql`SELECT COALESCE(SUM(monto), 0) AS total_gastos FROM gastos`;
-    const [{ total_ingresos }] =
-      await sql`SELECT COALESCE(SUM(monto), 0) AS total_ingresos FROM ingresos`;
+    const [{ total_gastos }] = await sql`
+      SELECT COALESCE(SUM(monto), 0) AS total_gastos
+      FROM gastos
+      WHERE usuario_id = ${userId}
+    `;
+    const [{ total_ingresos }] = await sql`
+      SELECT COALESCE(SUM(monto), 0) AS total_ingresos
+      FROM ingresos
+      WHERE usuario_id = ${userId}
+    `;
     res.json({
       total_gastos: parseFloat(total_gastos),
       total_ingresos: parseFloat(total_ingresos),
@@ -149,10 +178,12 @@ app.get("/api/resumen", authMiddleware, async (req, res) => {
 // ==================
 
 app.get("/api/graficos", authMiddleware, async (req, res) => {
+  const userId = req.user.userId;
   try {
     const gastosPorCategoria = await sql`
       SELECT categoria, COALESCE(SUM(monto), 0) AS total
       FROM gastos
+      WHERE usuario_id = ${userId}
       GROUP BY categoria
       ORDER BY total DESC
     `;
@@ -160,6 +191,7 @@ app.get("/api/graficos", authMiddleware, async (req, res) => {
     const ingresosPorCategoria = await sql`
       SELECT categoria, COALESCE(SUM(monto), 0) AS total
       FROM ingresos
+      WHERE usuario_id = ${userId}
       GROUP BY categoria
       ORDER BY total DESC
     `;
@@ -178,11 +210,11 @@ app.get("/api/graficos", authMiddleware, async (req, res) => {
       ) meses
       LEFT JOIN (
         SELECT date_trunc('month', fecha) AS mes, SUM(monto) AS total_gastos
-        FROM gastos GROUP BY 1
+        FROM gastos WHERE usuario_id = ${userId} GROUP BY 1
       ) g USING (mes)
       LEFT JOIN (
         SELECT date_trunc('month', fecha) AS mes, SUM(monto) AS total_ingresos
-        FROM ingresos GROUP BY 1
+        FROM ingresos WHERE usuario_id = ${userId} GROUP BY 1
       ) i USING (mes)
       ORDER BY mes
     `;
@@ -213,8 +245,13 @@ app.get("/api/graficos", authMiddleware, async (req, res) => {
 // ========================
 
 app.get("/api/metas", authMiddleware, async (req, res) => {
+  const userId = req.user.userId;
   try {
-    const rows = await sql`SELECT * FROM metas ORDER BY fecha_creacion DESC`;
+    const rows = await sql`
+      SELECT * FROM metas
+      WHERE usuario_id = ${userId}
+      ORDER BY fecha_creacion DESC
+    `;
     res.json(rows);
   } catch (error) {
     console.error("Error en GET /api/metas:", error);
@@ -223,14 +260,15 @@ app.get("/api/metas", authMiddleware, async (req, res) => {
 });
 
 app.post("/api/metas", authMiddleware, async (req, res) => {
+  const userId = req.user.userId;
   const { nombre, monto_objetivo, monto_actual } = req.body;
   if (!nombre || !monto_objetivo) {
     return res.status(400).json({ error: "Faltan campos obligatorios" });
   }
   try {
     await sql`
-      INSERT INTO metas (nombre, monto_objetivo, monto_actual)
-      VALUES (${nombre}, ${parseFloat(monto_objetivo)}, ${parseFloat(monto_actual || 0)})
+      INSERT INTO metas (nombre, monto_objetivo, monto_actual, usuario_id)
+      VALUES (${nombre}, ${parseFloat(monto_objetivo)}, ${parseFloat(monto_actual || 0)}, ${userId})
     `;
     res.status(201).json({ mensaje: "Meta creada" });
   } catch (error) {
@@ -240,6 +278,7 @@ app.post("/api/metas", authMiddleware, async (req, res) => {
 });
 
 app.patch("/api/metas/:id/abonar", authMiddleware, async (req, res) => {
+  const userId = req.user.userId;
   const { id } = req.params;
   const { monto } = req.body;
   if (!monto || parseFloat(monto) <= 0) {
@@ -249,7 +288,7 @@ app.patch("/api/metas/:id/abonar", authMiddleware, async (req, res) => {
     await sql`
       UPDATE metas
       SET monto_actual = monto_actual + ${parseFloat(monto)}
-      WHERE id = ${id}
+      WHERE id = ${id} AND usuario_id = ${userId}
     `;
     res.json({ mensaje: "Abono registrado" });
   } catch (error) {
@@ -259,9 +298,10 @@ app.patch("/api/metas/:id/abonar", authMiddleware, async (req, res) => {
 });
 
 app.delete("/api/metas/:id", authMiddleware, async (req, res) => {
+  const userId = req.user.userId;
   const { id } = req.params;
   try {
-    await sql`DELETE FROM metas WHERE id = ${id}`;
+    await sql`DELETE FROM metas WHERE id = ${id} AND usuario_id = ${userId}`;
     res.json({ mensaje: "Meta eliminada" });
   } catch (error) {
     res.status(500).json({ error: error.message });
