@@ -1,8 +1,8 @@
 const API = "https://migestor-production.up.railway.app/api";
 
-// ==================
+// ══════════════════════════════════════
 //  AUTH HELPERS
-// ==================
+// ══════════════════════════════════════
 function authHeaders() {
   const token = localStorage.getItem("auth_token");
   return {
@@ -11,15 +11,24 @@ function authHeaders() {
   };
 }
 
-// ==================
+// ══════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════
+function showToast(msg, type = "success") {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => { t.classList.remove("show"); }, 2800);
+}
+
+// ══════════════════════════════════════
 //  SIDEBAR MOBILE
-// ==================
+// ══════════════════════════════════════
 function toggleSidebar() {
   const sidebar = document.getElementById("sidebar");
   const backdrop = document.getElementById("sidebar-backdrop");
   const hamburger = document.getElementById("hamburger");
   const isOpen = sidebar.classList.contains("open");
-
   if (isOpen) {
     sidebar.classList.remove("open");
     if (backdrop) backdrop.classList.remove("visible");
@@ -31,22 +40,21 @@ function toggleSidebar() {
   }
 }
 
-// Close sidebar on outside click
 document.addEventListener("click", (e) => {
   const sidebar = document.getElementById("sidebar");
   const hamburger = document.getElementById("hamburger");
   const backdrop = document.getElementById("sidebar-backdrop");
   if (sidebar && sidebar.classList.contains("open") &&
-      !sidebar.contains(e.target) && hamburger && !hamburger.contains(e.target)) {
+    !sidebar.contains(e.target) && hamburger && !hamburger.contains(e.target)) {
     sidebar.classList.remove("open");
     if (backdrop) backdrop.classList.remove("visible");
     if (hamburger) hamburger.classList.remove("active");
   }
 });
 
-// ==================
-//  MODAL
-// ==================
+// ══════════════════════════════════════
+//  MODAL CONFIRMACIÓN
+// ══════════════════════════════════════
 let _modalCallback = null;
 
 function showModal(mensaje, onConfirm) {
@@ -66,9 +74,9 @@ function modalCancel() {
   _modalCallback = null;
 }
 
-// ==================
+// ══════════════════════════════════════
 //  INIT
-// ==================
+// ══════════════════════════════════════
 document.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem("auth_token");
   const authOverlay = document.getElementById("auth-overlay");
@@ -94,7 +102,7 @@ function setUserInfo() {
     const avatarEl = document.getElementById("sidebar-avatar");
     if (nameEl) nameEl.textContent = name;
     if (avatarEl) avatarEl.textContent = name.charAt(0).toUpperCase();
-  } catch (e) {}
+  } catch (e) { }
 }
 
 // Login form
@@ -125,7 +133,6 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
       btn.disabled = false;
     }
   } catch (err) {
-    console.error("Error login:", err);
     errorMsg.textContent = "Error de conexión con el servidor";
     errorMsg.style.display = "block";
     btn.textContent = "Entrar";
@@ -138,45 +145,150 @@ function logout() {
   window.location.reload();
 }
 
-// ==================
+// ══════════════════════════════════════
 //  TABS
-// ==================
+// ══════════════════════════════════════
+const PAGE_TITLES = {
+  dashboard: "Dashboard",
+  gastos: "Gastos",
+  ingresos: "Ingresos",
+  metas: "Metas de ahorro",
+  presupuestos: "Presupuestos",
+  graficos: "Análisis"
+};
+
 function switchTab(tab) {
   document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
   document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
   document.getElementById(`tab-${tab}`).classList.add("active");
   document.querySelector(`[data-tab="${tab}"]`).classList.add("active");
-  // Close sidebar
+  const titleEl = document.getElementById("page-title");
+  if (titleEl) titleEl.textContent = PAGE_TITLES[tab] || tab;
+  // Close sidebar on mobile
   const sidebar = document.getElementById("sidebar");
   const backdrop = document.getElementById("sidebar-backdrop");
   const hamburger = document.getElementById("hamburger");
   if (sidebar) sidebar.classList.remove("open");
   if (backdrop) backdrop.classList.remove("visible");
   if (hamburger) hamburger.classList.remove("active");
+
   if (tab === "graficos") loadGraficos();
+  if (tab === "dashboard") loadDashboard();
 }
 
-// ==================
-//  RESUMEN
-// ==================
+// ══════════════════════════════════════
+//  RESUMEN (topbar pills)
+// ══════════════════════════════════════
 async function loadResumen() {
   try {
     const res = await fetch(`${API}/resumen`, { headers: authHeaders() });
     const data = await res.json();
-    document.getElementById("total-ingresos").textContent = `$${parseFloat(data.total_ingresos).toFixed(2)}`;
-    document.getElementById("total-gastos").textContent = `$${parseFloat(data.total_gastos).toFixed(2)}`;
-    const balanceEl = document.getElementById("balance");
+    const ingresos = parseFloat(data.total_ingresos);
+    const gastos = parseFloat(data.total_gastos);
     const balance = parseFloat(data.balance);
-    balanceEl.textContent = `${balance < 0 ? '-' : ''}$${Math.abs(balance).toFixed(2)}`;
-    balanceEl.className = balance >= 0 ? "sc-value positive" : "sc-value negative";
+
+    // Topbar pills
+    document.getElementById("top-ingresos").textContent = `$${ingresos.toFixed(2)}`;
+    document.getElementById("top-gastos").textContent = `$${gastos.toFixed(2)}`;
+    const topBal = document.getElementById("top-balance");
+    topBal.textContent = `${balance < 0 ? "-" : ""}$${Math.abs(balance).toFixed(2)}`;
+
+    // Dashboard cards
+    document.getElementById("dash-ingresos").textContent = `$${ingresos.toFixed(2)}`;
+    document.getElementById("dash-gastos").textContent = `$${gastos.toFixed(2)}`;
+
+    const dashBal = document.getElementById("dash-balance");
+    dashBal.textContent = `${balance < 0 ? "-" : ""}$${Math.abs(balance).toFixed(2)}`;
+    dashBal.className = `sc-value ${balance >= 0 ? "positive" : "negative"}`;
+
+    const ahorroEl = document.getElementById("dash-ahorro");
+    const ahorroPct = ingresos > 0 ? ((balance / ingresos) * 100).toFixed(1) : "0";
+    ahorroEl.textContent = `${ahorroPct}%`;
+    ahorroEl.className = `sc-value ${parseFloat(ahorroPct) >= 0 ? "positive" : "negative"}`;
+
   } catch (error) {
     console.error("Error cargando resumen:", error);
   }
 }
 
-// ==================
+// ══════════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════════
+let dashChartEvolucion = null;
+
+async function loadDashboard() {
+  await loadResumen();
+  await loadDashRecent();
+  await loadDashChart();
+}
+
+async function loadDashRecent() {
+  try {
+    const [resG, resI] = await Promise.all([
+      fetch(`${API}/gastos`, { headers: authHeaders() }),
+      fetch(`${API}/ingresos`, { headers: authHeaders() })
+    ]);
+    const gastos = await resG.json();
+    const ingresos = await resI.json();
+
+    // Combine, tag and sort by date desc, take 8
+    const combined = [
+      ...gastos.map(g => ({ ...g, _tipo: "expense" })),
+      ...ingresos.map(i => ({ ...i, _tipo: "income" }))
+    ].sort((a, b) => new Date(b.fecha) - new Date(a.fecha)).slice(0, 8);
+
+    const list = document.getElementById("dash-recent");
+    if (!combined.length) {
+      list.innerHTML = '<li class="empty-state">No hay movimientos aún. ¡Añade el primero!</li>';
+      return;
+    }
+    list.innerHTML = combined.map(tx => `
+      <li>
+        <div class="tx-icon">${CAT_ICONS[tx.categoria] || (tx._tipo === "income" ? "💰" : "📦")}</div>
+        <div class="tx-info">
+          <strong>${tx.descripcion}</strong>
+          <small>${tx.categoria} · ${new Date(tx.fecha).toLocaleDateString("es-ES")}</small>
+        </div>
+        <div class="tx-right">
+          <span class="tx-amount ${tx._tipo === "expense" ? "expense" : "income"}">
+            ${tx._tipo === "expense" ? "-" : "+"}$${parseFloat(tx.monto).toFixed(2)}
+          </span>
+        </div>
+      </li>
+    `).join("");
+  } catch (error) {
+    console.error("Error cargando dashboard reciente:", error);
+  }
+}
+
+async function loadDashChart() {
+  try {
+    const res = await fetch(`${API}/graficos`, { headers: authHeaders() });
+    const data = await res.json();
+
+    if (dashChartEvolucion) dashChartEvolucion.destroy();
+    dashChartEvolucion = new Chart(
+      document.getElementById("dash-chart-evolucion").getContext("2d"),
+      buildBarChartConfig(data.evolucionMensual)
+    );
+  } catch (error) {
+    console.error("Error cargando chart dashboard:", error);
+  }
+}
+
+// ══════════════════════════════════════
+//  CAT ICONS
+// ══════════════════════════════════════
+const CAT_ICONS = {
+  Comida: "🍔", Transporte: "🚗", Ocio: "🎬", Renta: "🏠", Salud: "💊",
+  Educación: "📚", Ropa: "👕", Suscripciones: "📱", Otros: "📦",
+  Salario: "💼", Freelance: "💻", Inversión: "📈", Regalo: "🎁",
+  Bono: "⭐", Alquiler: "🏘️"
+};
+
+// ══════════════════════════════════════
 //  GASTOS
-// ==================
+// ══════════════════════════════════════
 document.getElementById("expense-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   const btn = e.target.querySelector("button[type=submit]");
@@ -197,23 +309,18 @@ document.getElementById("expense-form").addEventListener("submit", async (e) => 
       e.target.reset();
       loadExpenses();
       loadResumen();
+      showToast("✅ Gasto añadido correctamente");
     } else {
       const err = await res.json();
-      alert("Error: " + err.error);
+      showToast("Error: " + err.error, "error");
     }
   } catch (error) {
-    alert("No se pudo conectar con el servidor.");
+    showToast("No se pudo conectar con el servidor.", "error");
   } finally {
-    btn.textContent = "Añadir gasto";
+    btn.textContent = "+ Añadir gasto";
     btn.disabled = false;
   }
 });
-
-const CAT_ICONS = {
-  Comida: "🍔", Transporte: "🚗", Ocio: "🎬", Renta: "🏠", Salud: "💊",
-  Educación: "📚", Ropa: "👕", Suscripciones: "📱", Otros: "📦",
-  Salario: "💼", Freelance: "💻", Inversión: "📈", Regalo: "🎁", Bono: "⭐", Alquiler: "🏘️"
-};
 
 async function loadExpenses() {
   try {
@@ -248,15 +355,16 @@ async function deleteGasto(id) {
       await fetch(`${API}/gastos/${id}`, { method: "DELETE", headers: authHeaders() });
       loadExpenses();
       loadResumen();
+      showToast("🗑️ Gasto eliminado");
     } catch (error) {
-      alert("Error al eliminar el gasto.");
+      showToast("Error al eliminar el gasto.", "error");
     }
   });
 }
 
-// ==================
+// ══════════════════════════════════════
 //  INGRESOS
-// ==================
+// ══════════════════════════════════════
 document.getElementById("income-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   const btn = e.target.querySelector("button[type=submit]");
@@ -277,14 +385,15 @@ document.getElementById("income-form").addEventListener("submit", async (e) => {
       e.target.reset();
       loadIncome();
       loadResumen();
+      showToast("✅ Ingreso añadido correctamente");
     } else {
       const err = await res.json();
-      alert("Error: " + err.error);
+      showToast("Error: " + err.error, "error");
     }
   } catch (error) {
-    alert("No se pudo conectar con el servidor.");
+    showToast("No se pudo conectar con el servidor.", "error");
   } finally {
-    btn.textContent = "Añadir ingreso";
+    btn.textContent = "+ Añadir ingreso";
     btn.disabled = false;
   }
 });
@@ -322,15 +431,16 @@ async function deleteIngreso(id) {
       await fetch(`${API}/ingresos/${id}`, { method: "DELETE", headers: authHeaders() });
       loadIncome();
       loadResumen();
+      showToast("🗑️ Ingreso eliminado");
     } catch (error) {
-      alert("Error al eliminar el ingreso.");
+      showToast("Error al eliminar el ingreso.", "error");
     }
   });
 }
 
-// ==================
+// ══════════════════════════════════════
 //  METAS
-// ==================
+// ══════════════════════════════════════
 document.getElementById("meta-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   const btn = e.target.querySelector("button[type=submit]");
@@ -350,14 +460,15 @@ document.getElementById("meta-form").addEventListener("submit", async (e) => {
     if (res.ok) {
       e.target.reset();
       loadMetas();
+      showToast("🎯 Meta creada correctamente");
     } else {
       const err = await res.json();
-      alert("Error: " + err.error);
+      showToast("Error: " + err.error, "error");
     }
   } catch (error) {
-    alert("No se pudo conectar con el servidor.");
+    showToast("No se pudo conectar con el servidor.", "error");
   } finally {
-    btn.textContent = "Crear meta";
+    btn.textContent = "🎯 Crear meta";
     btn.disabled = false;
   }
 });
@@ -377,9 +488,9 @@ async function loadMetas() {
       const pct = Math.min((actual / objetivo) * 100, 100).toFixed(1);
       const completada = actual >= objetivo;
       return `
-        <div class="meta-card ${completada ? 'meta-completada' : ''}">
+        <div class="meta-card ${completada ? "meta-completada" : ""}">
           <div class="meta-header">
-            <span class="meta-nombre">${completada ? '✅' : '🎯'} ${m.nombre}</span>
+            <span class="meta-nombre">${completada ? "✅" : "🎯"} ${m.nombre}</span>
             <button type="button" class="btn-delete" onclick="deleteMeta(${m.id})" title="Eliminar">✕</button>
           </div>
           <div class="meta-montos">
@@ -387,15 +498,15 @@ async function loadMetas() {
             <span class="meta-pct">${pct}%</span>
           </div>
           <div class="progress-bar">
-            <div class="progress-fill ${completada ? 'progress-done' : ''}" style="width: ${pct}%"></div>
+            <div class="progress-fill ${completada ? "progress-done" : ""}" style="width: ${pct}%"></div>
           </div>
           ${completada
-            ? '<p class="meta-logro">¡Meta alcanzada! 🎉</p>'
-            : `<div class="meta-abonar">
+          ? '<p class="meta-logro">¡Meta alcanzada! 🎉</p>'
+          : `<div class="meta-abonar">
                 <input type="number" id="abono-${m.id}" placeholder="Abonar $" step="0.01" min="0.01" />
                 <button onclick="abonarMeta(${m.id})">Abonar</button>
                </div>`
-          }
+        }
         </div>
       `;
     }).join("");
@@ -407,17 +518,22 @@ async function loadMetas() {
 async function abonarMeta(id) {
   const input = document.getElementById(`abono-${id}`);
   const monto = parseFloat(input.value);
-  if (!monto || monto <= 0) { alert("Introduce un monto válido."); return; }
+  if (!monto || monto <= 0) { showToast("Introduce un monto válido.", "error"); return; }
   try {
     const res = await fetch(`${API}/metas/${id}/abonar`, {
       method: "PATCH",
       headers: authHeaders(),
       body: JSON.stringify({ monto }),
     });
-    if (res.ok) { loadMetas(); }
-    else { const err = await res.json(); alert("Error: " + err.error); }
+    if (res.ok) {
+      loadMetas();
+      showToast("💰 Abono registrado");
+    } else {
+      const err = await res.json();
+      showToast("Error: " + err.error, "error");
+    }
   } catch (error) {
-    alert("No se pudo conectar con el servidor.");
+    showToast("No se pudo conectar con el servidor.", "error");
   }
 }
 
@@ -426,100 +542,17 @@ async function deleteMeta(id) {
     try {
       await fetch(`${API}/metas/${id}`, { method: "DELETE", headers: authHeaders() });
       loadMetas();
+      showToast("🗑️ Meta eliminada");
     } catch (error) {
-      alert("Error al eliminar la meta.");
+      showToast("Error al eliminar la meta.", "error");
     }
   });
 }
 
-// ==================
-//  GRÁFICOS
-// ==================
-let chartGastosCat = null, chartIngresosCat = null, chartEvolucion = null;
-
-const CHART_COLORS = [
-  "#1E7D5A","#34A874","#B8860B","#C0392B",
-  "#2980B9","#8E44AD","#E67E22","#27AE60","#2C3E50"
-];
-
-async function loadGraficos() {
-  try {
-    const res = await fetch(`${API}/graficos`, { headers: authHeaders() });
-    const data = await res.json();
-
-    if (chartGastosCat) chartGastosCat.destroy();
-    chartGastosCat = new Chart(document.getElementById("chart-gastos-cat").getContext("2d"), {
-      type: "doughnut",
-      data: {
-        labels: data.gastosPorCategoria.map(r => r.categoria),
-        datasets: [{ data: data.gastosPorCategoria.map(r => r.total), backgroundColor: CHART_COLORS, borderWidth: 2, borderColor: "#fff" }]
-      },
-      options: {
-        plugins: {
-          legend: { position: "bottom", labels: { color: "#5A5750", font: { family: "'DM Sans', sans-serif", size: 11 }, boxWidth: 12, padding: 16 } },
-          tooltip: { backgroundColor: "#1A1A18", titleColor: "#fff", bodyColor: "#ccc", callbacks: { label: ctx => ` $${ctx.parsed.toFixed(2)}` } }
-        }
-      }
-    });
-
-    if (chartIngresosCat) chartIngresosCat.destroy();
-    chartIngresosCat = new Chart(document.getElementById("chart-ingresos-cat").getContext("2d"), {
-      type: "doughnut",
-      data: {
-        labels: data.ingresosPorCategoria.map(r => r.categoria),
-        datasets: [{ data: data.ingresosPorCategoria.map(r => r.total), backgroundColor: CHART_COLORS, borderWidth: 2, borderColor: "#fff" }]
-      },
-      options: {
-        plugins: {
-          legend: { position: "bottom", labels: { color: "#5A5750", font: { family: "'DM Sans', sans-serif", size: 11 }, boxWidth: 12, padding: 16 } },
-          tooltip: { backgroundColor: "#1A1A18", titleColor: "#fff", bodyColor: "#ccc", callbacks: { label: ctx => ` $${ctx.parsed.toFixed(2)}` } }
-        }
-      }
-    });
-
-    if (chartEvolucion) chartEvolucion.destroy();
-    chartEvolucion = new Chart(document.getElementById("chart-evolucion").getContext("2d"), {
-      type: "bar",
-      data: {
-        labels: data.evolucionMensual.map(r => r.label),
-        datasets: [
-          { label: "Ingresos", data: data.evolucionMensual.map(r => r.total_ingresos), backgroundColor: "rgba(30,125,90,0.75)", borderColor: "#1E7D5A", borderWidth: 1, borderRadius: 4 },
-          { label: "Gastos",   data: data.evolucionMensual.map(r => r.total_gastos),   backgroundColor: "rgba(192,57,43,0.65)", borderColor: "#C0392B",  borderWidth: 1, borderRadius: 4 }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { position: "top", labels: { color: "#5A5750", font: { family: "'DM Sans', sans-serif", size: 11 }, boxWidth: 12 } },
-          tooltip: { backgroundColor: "#1A1A18", titleColor: "#fff", bodyColor: "#ccc", callbacks: { label: ctx => ` ${ctx.dataset.label}: $${ctx.parsed.y.toFixed(2)}` } }
-        },
-        scales: {
-          x: { ticks: { color: "#9A9690", font: { family: "'DM Sans', sans-serif", size: 11 } }, grid: { color: "rgba(226,222,214,0.7)" } },
-          y: { beginAtZero: true, ticks: { color: "#9A9690", font: { family: "'DM Sans', sans-serif", size: 11 }, callback: v => `$${v}` }, grid: { color: "rgba(226,222,214,0.7)" } }
-        }
-      }
-    });
-  } catch (error) {
-    console.error("Error cargando gráficos:", error);
-  }
-}
-
-// ==================
-//  INIT APP
-// ==================
-function initApp() {
-  loadExpenses();
-  loadIncome();
-  loadResumen();
-  loadMetas();
-  loadPresupuestos();
-}
-
-// ==================
+// ══════════════════════════════════════
 //  PRESUPUESTOS
-// ==================
-const MESES_ES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+// ══════════════════════════════════════
+const MESES_ES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
 document.getElementById("presupuesto-form").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -539,12 +572,13 @@ document.getElementById("presupuesto-form").addEventListener("submit", async (e)
     if (res.ok) {
       e.target.reset();
       loadPresupuestos();
+      showToast("✅ Presupuesto guardado");
     } else {
       const err = await res.json();
-      alert("Error: " + err.error);
+      showToast("Error: " + err.error, "error");
     }
   } catch (error) {
-    alert("No se pudo conectar con el servidor.");
+    showToast("No se pudo conectar con el servidor.", "error");
   } finally {
     btn.textContent = "Guardar presupuesto";
     btn.disabled = false;
@@ -552,7 +586,6 @@ document.getElementById("presupuesto-form").addEventListener("submit", async (e)
 });
 
 async function loadPresupuestos() {
-  // Mostrar mes actual en el header
   const now = new Date();
   const mesLabel = document.getElementById("pres-mes");
   if (mesLabel) mesLabel.textContent = `${MESES_ES[now.getMonth()]} ${now.getFullYear()}`;
@@ -583,7 +616,7 @@ async function loadPresupuestos() {
             </div>
             <div class="pres-amounts">
               <span class="pres-gastado">$${gastado.toFixed(2)}</span>
-              <span class="pres-limite-txt">/ $${limite.toFixed(2)}</span>
+              <span class="pres-limite-txt"> / $${limite.toFixed(2)}</span>
             </div>
           </div>
           <div class="pres-bar-wrap">
@@ -593,7 +626,7 @@ async function loadPresupuestos() {
             <span class="pres-pct ${estado}">${pct}%</span>
           </div>
           <div class="pres-actions">
-            <button type="button" class="btn-delete" onclick="deletePresupuesto(${p.id})" title="Eliminar">✕</button>
+            <button type="button" class="btn-delete" onclick="deletePresupuesto(${p.id})" title="Eliminar">✕ Eliminar</button>
           </div>
         </div>
       `;
@@ -608,8 +641,109 @@ async function deletePresupuesto(id) {
     try {
       await fetch(`${API}/presupuestos/${id}`, { method: "DELETE", headers: authHeaders() });
       loadPresupuestos();
+      showToast("🗑️ Presupuesto eliminado");
     } catch (error) {
-      alert("Error al eliminar el presupuesto.");
+      showToast("Error al eliminar el presupuesto.", "error");
     }
   });
+}
+
+// ══════════════════════════════════════
+//  GRÁFICOS
+// ══════════════════════════════════════
+let chartGastosCat = null, chartIngresosCat = null, chartEvolucion = null;
+
+const CHART_COLORS = [
+  "#6366f1", "#10b981", "#0ea5e9", "#f59e0b",
+  "#ef4444", "#8b5cf6", "#ec4899", "#14b8a6", "#f97316"
+];
+
+function buildBarChartConfig(evolucionMensual) {
+  return {
+    type: "bar",
+    data: {
+      labels: evolucionMensual.map(r => r.label),
+      datasets: [
+        {
+          label: "Ingresos",
+          data: evolucionMensual.map(r => r.total_ingresos),
+          backgroundColor: "rgba(16,185,129,0.7)",
+          borderColor: "#10b981",
+          borderWidth: 1, borderRadius: 6
+        },
+        {
+          label: "Gastos",
+          data: evolucionMensual.map(r => r.total_gastos),
+          backgroundColor: "rgba(239,68,68,0.65)",
+          borderColor: "#ef4444",
+          borderWidth: 1, borderRadius: 6
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: "top", labels: { color: "#94a3b8", font: { family: "Inter, sans-serif", size: 11 }, boxWidth: 12 } },
+        tooltip: { backgroundColor: "#111827", titleColor: "#f1f5f9", bodyColor: "#94a3b8", callbacks: { label: ctx => ` ${ctx.dataset.label}: $${ctx.parsed.y.toFixed(2)}` } }
+      },
+      scales: {
+        x: { ticks: { color: "#475569", font: { family: "Inter, sans-serif", size: 11 } }, grid: { color: "rgba(255,255,255,0.05)" } },
+        y: { beginAtZero: true, ticks: { color: "#475569", font: { family: "Inter, sans-serif", size: 11 }, callback: v => `$${v}` }, grid: { color: "rgba(255,255,255,0.05)" } }
+      }
+    }
+  };
+}
+
+async function loadGraficos() {
+  try {
+    const res = await fetch(`${API}/graficos`, { headers: authHeaders() });
+    const data = await res.json();
+
+    const donutOptions = {
+      plugins: {
+        legend: { position: "bottom", labels: { color: "#94a3b8", font: { family: "Inter, sans-serif", size: 11 }, boxWidth: 12, padding: 16 } },
+        tooltip: { backgroundColor: "#111827", titleColor: "#f1f5f9", bodyColor: "#94a3b8", callbacks: { label: ctx => ` $${ctx.parsed.toFixed(2)}` } }
+      }
+    };
+
+    if (chartGastosCat) chartGastosCat.destroy();
+    chartGastosCat = new Chart(document.getElementById("chart-gastos-cat").getContext("2d"), {
+      type: "doughnut",
+      data: {
+        labels: data.gastosPorCategoria.map(r => r.categoria),
+        datasets: [{ data: data.gastosPorCategoria.map(r => r.total), backgroundColor: CHART_COLORS, borderWidth: 2, borderColor: "#111827" }]
+      },
+      options: donutOptions
+    });
+
+    if (chartIngresosCat) chartIngresosCat.destroy();
+    chartIngresosCat = new Chart(document.getElementById("chart-ingresos-cat").getContext("2d"), {
+      type: "doughnut",
+      data: {
+        labels: data.ingresosPorCategoria.map(r => r.categoria),
+        datasets: [{ data: data.ingresosPorCategoria.map(r => r.total), backgroundColor: CHART_COLORS, borderWidth: 2, borderColor: "#111827" }]
+      },
+      options: donutOptions
+    });
+
+    if (chartEvolucion) chartEvolucion.destroy();
+    chartEvolucion = new Chart(
+      document.getElementById("chart-evolucion").getContext("2d"),
+      buildBarChartConfig(data.evolucionMensual)
+    );
+  } catch (error) {
+    console.error("Error cargando gráficos:", error);
+  }
+}
+
+// ══════════════════════════════════════
+//  INIT APP
+// ══════════════════════════════════════
+function initApp() {
+  loadExpenses();
+  loadIncome();
+  loadMetas();
+  loadPresupuestos();
+  loadDashboard();
 }

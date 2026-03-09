@@ -1,16 +1,23 @@
 <!doctype html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MiGestor · Finanzas Personales</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
-  <!-- AUTH SCREEN -->
+  <!-- ═══════════════════════════════════════
+       AUTH SCREEN
+  ════════════════════════════════════════ -->
   <div id="auth-overlay" class="auth-overlay">
     <div class="auth-card">
       <div class="auth-logo">
@@ -37,7 +44,12 @@
     </div>
     <div class="auth-visual">
       <div class="auth-visual-inner">
-        <div class="av-quote">"App Migestor Jeronimo"</div>
+        <div class="av-quote">"Tu dinero, bajo control"</div>
+        <div class="av-stats">
+          <div class="av-stat"><span class="av-stat-val">100%</span><span class="av-stat-lbl">Seguro</span></div>
+          <div class="av-stat"><span class="av-stat-val">JWT</span><span class="av-stat-lbl">Auth</span></div>
+          <div class="av-stat"><span class="av-stat-val">∞</span><span class="av-stat-lbl">Metas</span></div>
+        </div>
         <div class="av-circles">
           <div class="avc avc-1"></div>
           <div class="avc avc-2"></div>
@@ -47,36 +59,67 @@
     </div>
   </div>
 
-  <!-- APP -->
+  <!-- ═══════════════════════════════════════
+       APP
+  ════════════════════════════════════════ -->
   <div class="app" id="app" style="display:none">
 
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
-      <div class="sidebar-logo">
-        <div class="sidebar-logo-mark">M</div>
-        <span>MiGestor</span>
+      <div class="sidebar-brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+            <path d="M2 17l10 5 10-5" />
+            <path d="M2 12l10 5 10-5" />
+          </svg>
+        </div>
+        <span class="brand-name">MiGestor</span>
       </div>
 
       <nav class="sidebar-nav">
-        <button class="nav-item active" onclick="switchTab('gastos')" data-tab="gastos">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        <button class="nav-item active" onclick="switchTab('dashboard')" data-tab="dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+          </svg>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('gastos')" data-tab="gastos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 4v16M5 13l7 7 7-7" />
+          </svg>
           <span>Gastos</span>
         </button>
         <button class="nav-item" onclick="switchTab('ingresos')" data-tab="ingresos">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 20V4M5 11l7-7 7 7" />
+          </svg>
           <span>Ingresos</span>
         </button>
         <button class="nav-item" onclick="switchTab('metas')" data-tab="metas">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
           <span>Metas</span>
         </button>
         <button class="nav-item" onclick="switchTab('presupuestos')" data-tab="presupuestos">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M6 8h4M6 11h8"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" />
+            <path d="M8 21h8M12 17v4" />
+          </svg>
           <span>Presupuestos</span>
         </button>
         <button class="nav-item" onclick="switchTab('graficos')" data-tab="graficos">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          <span>Gráficos</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10" />
+            <line x1="12" y1="20" x2="12" y2="4" />
+            <line x1="6" y1="20" x2="6" y2="14" />
+          </svg>
+          <span>Análisis</span>
         </button>
       </nav>
 
@@ -89,15 +132,19 @@
           </div>
         </div>
         <button class="sidebar-logout" onclick="logout()" title="Cerrar sesión">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
         </button>
       </div>
     </aside>
 
     <!-- MOBILE TOPBAR -->
-    <div class="topbar">
-      <div class="topbar-logo">
-        <div class="sidebar-logo-mark small">M</div>
+    <div class="mobile-topbar">
+      <div class="mobile-brand">
+        <div class="brand-icon small">M</div>
         <span>MiGestor</span>
       </div>
       <button class="hamburger" onclick="toggleSidebar()" id="hamburger">
@@ -111,242 +158,337 @@
     <!-- MAIN CONTENT -->
     <main class="main">
 
-      <!-- RESUMEN CARDS -->
-      <div class="summary-bar">
-        <div class="summary-card summary-income" onclick="switchTab('ingresos')" style="cursor:pointer">
-          <div class="sc-label">Ingresos totales</div>
-          <div class="sc-value" id="total-ingresos">$0.00</div>
-          <div class="sc-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-          </div>
-        </div>
-        <div class="summary-card summary-expense" onclick="switchTab('gastos')" style="cursor:pointer">
-          <div class="sc-label">Gastos totales</div>
-          <div class="sc-value" id="total-gastos">$0.00</div>
-          <div class="sc-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
-          </div>
-        </div>
-        <div class="summary-card summary-balance">
-          <div class="sc-label">Balance neto</div>
-          <div class="sc-value" id="balance">$0.00</div>
-          <div class="sc-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-          </div>
-        </div>
-      </div>
-
-      <!-- GASTOS -->
-      <div id="tab-gastos" class="tab-content active">
-        <div class="page-header">
-          <h1 class="page-title">Gastos</h1>
-          <p class="page-sub">Registra y controla tus egresos</p>
-        </div>
-        <div class="content-grid">
-          <div class="panel">
-            <div class="panel-header">
-              <h3>Nuevo gasto</h3>
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <h1 class="page-title" id="page-title">Dashboard</h1>
+        <div class="topbar-right">
+          <div class="summary-pills">
+            <div class="pill pill-income" onclick="switchTab('ingresos')" title="Ver ingresos">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                <path d="M12 20V4M5 11l7-7 7 7" />
+              </svg>
+              <span id="top-ingresos">$0.00</span>
             </div>
-            <form id="expense-form" class="form">
-              <div class="field">
-                <label>Descripción</label>
-                <input type="text" id="desc" placeholder="¿En qué gastaste?" required />
+            <div class="pill pill-expense" onclick="switchTab('gastos')" title="Ver gastos">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                <path d="M12 4v16M5 13l7 7 7-7" />
+              </svg>
+              <span id="top-gastos">$0.00</span>
+            </div>
+            <div class="pill pill-balance">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                <line x1="12" y1="1" x2="12" y2="23" />
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+              </svg>
+              <span id="top-balance">$0.00</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- VIEWS CONTAINER -->
+      <div class="views">
+
+        <!-- ─── DASHBOARD ─── -->
+        <div id="tab-dashboard" class="tab-content active">
+          <div class="summary-cards">
+            <div class="summary-card income-card" onclick="switchTab('ingresos')">
+              <div class="sc-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 20V4M5 11l7-7 7 7" />
+                </svg>
               </div>
-              <div class="field-row">
+              <div class="sc-body">
+                <p class="sc-label">Total Ingresos</p>
+                <p class="sc-value" id="dash-ingresos">$0.00</p>
+              </div>
+            </div>
+            <div class="summary-card expense-card" onclick="switchTab('gastos')">
+              <div class="sc-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 4v16M5 13l7 7 7-7" />
+                </svg>
+              </div>
+              <div class="sc-body">
+                <p class="sc-label">Total Gastos</p>
+                <p class="sc-value" id="dash-gastos">$0.00</p>
+              </div>
+            </div>
+            <div class="summary-card balance-card">
+              <div class="sc-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="1" x2="12" y2="23" />
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                </svg>
+              </div>
+              <div class="sc-body">
+                <p class="sc-label">Balance Neto</p>
+                <p class="sc-value" id="dash-balance">$0.00</p>
+              </div>
+            </div>
+            <div class="summary-card savings-card" onclick="switchTab('metas')">
+              <div class="sc-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                  <polyline points="22 4 12 14.01 9 11.01" />
+                </svg>
+              </div>
+              <div class="sc-body">
+                <p class="sc-label">Ahorro</p>
+                <p class="sc-value" id="dash-ahorro">0%</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="dash-grid">
+            <div class="panel panel-chart">
+              <div class="panel-header">
+                <h3>Evolución mensual</h3>
+                <button class="btn-refresh" onclick="loadDashboard()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                    <polyline points="23 4 23 10 17 10" />
+                    <polyline points="1 20 1 14 7 14" />
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                  </svg>
+                  Actualizar
+                </button>
+              </div>
+              <div class="chart-wrap chart-wrap--tall"><canvas id="dash-chart-evolucion"></canvas></div>
+            </div>
+            <div class="panel">
+              <div class="panel-header">
+                <h3>Movimientos recientes</h3>
+                <button class="link-btn" onclick="switchTab('gastos')">Ver todos</button>
+              </div>
+              <ul id="dash-recent" class="tx-list"></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── GASTOS ─── -->
+        <div id="tab-gastos" class="tab-content">
+          <div class="page-header">
+            <h1 class="section-title">Gastos</h1>
+            <p class="section-sub">Registra y controla tus egresos</p>
+          </div>
+          <div class="content-grid">
+            <div class="panel">
+              <div class="panel-header">
+                <h3>Nuevo gasto</h3>
+              </div>
+              <form id="expense-form" class="form">
                 <div class="field">
-                  <label>Monto ($)</label>
-                  <input type="number" id="amount" placeholder="0.00" step="0.01" min="0.01" required />
+                  <label>Descripción</label>
+                  <input type="text" id="desc" placeholder="¿En qué gastaste?" required />
                 </div>
+                <div class="field-row">
+                  <div class="field">
+                    <label>Monto ($)</label>
+                    <input type="number" id="amount" placeholder="0.00" step="0.01" min="0.01" required />
+                  </div>
+                  <div class="field">
+                    <label>Categoría</label>
+                    <select id="cat">
+                      <option value="Comida">🍔 Comida</option>
+                      <option value="Transporte">🚗 Transporte</option>
+                      <option value="Ocio">🎬 Ocio</option>
+                      <option value="Renta">🏠 Renta</option>
+                      <option value="Salud">💊 Salud</option>
+                      <option value="Educación">📚 Educación</option>
+                      <option value="Ropa">👕 Ropa</option>
+                      <option value="Suscripciones">📱 Suscripciones</option>
+                      <option value="Otros">📦 Otros</option>
+                    </select>
+                  </div>
+                </div>
+                <button type="submit" class="btn-primary">+ Añadir gasto</button>
+              </form>
+            </div>
+            <div class="panel">
+              <div class="panel-header">
+                <h3>Movimientos recientes</h3>
+              </div>
+              <ul id="expenses-list" class="tx-list"></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── INGRESOS ─── -->
+        <div id="tab-ingresos" class="tab-content">
+          <div class="page-header">
+            <h1 class="section-title">Ingresos</h1>
+            <p class="section-sub">Registra todas tus fuentes de ingreso</p>
+          </div>
+          <div class="content-grid">
+            <div class="panel">
+              <div class="panel-header">
+                <h3>Nuevo ingreso</h3>
+              </div>
+              <form id="income-form" class="form">
+                <div class="field">
+                  <label>Descripción</label>
+                  <input type="text" id="inc-desc" placeholder="¿De dónde viene?" required />
+                </div>
+                <div class="field-row">
+                  <div class="field">
+                    <label>Monto ($)</label>
+                    <input type="number" id="inc-amount" placeholder="0.00" step="0.01" min="0.01" required />
+                  </div>
+                  <div class="field">
+                    <label>Categoría</label>
+                    <select id="inc-cat">
+                      <option value="Salario">💼 Salario</option>
+                      <option value="Freelance">💻 Freelance</option>
+                      <option value="Inversión">📈 Inversión</option>
+                      <option value="Regalo">🎁 Regalo</option>
+                      <option value="Bono">⭐ Bono</option>
+                      <option value="Alquiler">🏘️ Alquiler</option>
+                      <option value="Otros">💰 Otros</option>
+                    </select>
+                  </div>
+                </div>
+                <button type="submit" class="btn-primary">+ Añadir ingreso</button>
+              </form>
+            </div>
+            <div class="panel">
+              <div class="panel-header">
+                <h3>Ingresos recientes</h3>
+              </div>
+              <ul id="income-list" class="tx-list"></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── METAS ─── -->
+        <div id="tab-metas" class="tab-content">
+          <div class="page-header">
+            <h1 class="section-title">Metas de ahorro</h1>
+            <p class="section-sub">Define y sigue tus objetivos financieros</p>
+          </div>
+          <div class="content-grid">
+            <div class="panel">
+              <div class="panel-header">
+                <h3>Nueva meta</h3>
+              </div>
+              <form id="meta-form" class="form">
+                <div class="field">
+                  <label>Nombre de la meta</label>
+                  <input type="text" id="meta-nombre" placeholder="Ej: Vacaciones, Fondo emergencia…" required />
+                </div>
+                <div class="field-row">
+                  <div class="field">
+                    <label>Objetivo ($)</label>
+                    <input type="number" id="meta-objetivo" placeholder="0.00" step="0.01" min="1" required />
+                  </div>
+                  <div class="field">
+                    <label>Ya ahorrado ($)</label>
+                    <input type="number" id="meta-inicial" placeholder="0.00" step="0.01" min="0" />
+                  </div>
+                </div>
+                <button type="submit" class="btn-primary">🎯 Crear meta</button>
+              </form>
+            </div>
+            <div class="panel">
+              <div class="panel-header">
+                <h3>Mis metas</h3>
+              </div>
+              <div id="metas-list" class="metas-grid"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── PRESUPUESTOS ─── -->
+        <div id="tab-presupuestos" class="tab-content">
+          <div class="page-header">
+            <h1 class="section-title">Presupuestos</h1>
+            <p class="section-sub">Define límites mensuales por categoría</p>
+          </div>
+          <div class="content-grid">
+            <div class="panel">
+              <div class="panel-header">
+                <h3>Nuevo presupuesto</h3>
+              </div>
+              <form id="presupuesto-form" class="form">
                 <div class="field">
                   <label>Categoría</label>
-                  <select id="cat">
-                    <option value="Comida">Comida</option>
-                    <option value="Transporte">Transporte</option>
-                    <option value="Ocio">Ocio</option>
-                    <option value="Renta">Renta</option>
-                    <option value="Salud">Salud</option>
-                    <option value="Educación">Educación</option>
-                    <option value="Ropa">Ropa</option>
-                    <option value="Suscripciones">Suscripciones</option>
-                    <option value="Otros">Otros</option>
+                  <select id="pres-categoria">
+                    <option value="Comida">🍔 Comida</option>
+                    <option value="Transporte">🚗 Transporte</option>
+                    <option value="Ocio">🎬 Ocio</option>
+                    <option value="Renta">🏠 Renta</option>
+                    <option value="Salud">💊 Salud</option>
+                    <option value="Educación">📚 Educación</option>
+                    <option value="Ropa">👕 Ropa</option>
+                    <option value="Suscripciones">📱 Suscripciones</option>
+                    <option value="Otros">📦 Otros</option>
                   </select>
                 </div>
-              </div>
-              <button type="submit" class="btn-primary">Añadir gasto</button>
-            </form>
-          </div>
-          <div class="panel">
-            <div class="panel-header">
-              <h3>Movimientos recientes</h3>
-            </div>
-            <ul id="expenses-list" class="tx-list"></ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- INGRESOS -->
-      <div id="tab-ingresos" class="tab-content">
-        <div class="page-header">
-          <h1 class="page-title">Ingresos</h1>
-          <p class="page-sub">Registra todas tus fuentes de ingreso</p>
-        </div>
-        <div class="content-grid">
-          <div class="panel">
-            <div class="panel-header">
-              <h3>Nuevo ingreso</h3>
-            </div>
-            <form id="income-form" class="form">
-              <div class="field">
-                <label>Descripción</label>
-                <input type="text" id="inc-desc" placeholder="¿De dónde viene?" required />
-              </div>
-              <div class="field-row">
                 <div class="field">
-                  <label>Monto ($)</label>
-                  <input type="number" id="inc-amount" placeholder="0.00" step="0.01" min="0.01" required />
+                  <label>Límite mensual ($)</label>
+                  <input type="number" id="pres-limite" placeholder="0.00" step="0.01" min="1" required />
                 </div>
-                <div class="field">
-                  <label>Categoría</label>
-                  <select id="inc-cat">
-                    <option value="Salario">Salario</option>
-                    <option value="Freelance">Freelance</option>
-                    <option value="Inversión">Inversión</option>
-                    <option value="Regalo">Regalo</option>
-                    <option value="Bono">Bono</option>
-                    <option value="Alquiler">Alquiler</option>
-                    <option value="Otros">Otros</option>
-                  </select>
-                </div>
-              </div>
-              <button type="submit" class="btn-primary">Añadir ingreso</button>
-            </form>
-          </div>
-          <div class="panel">
-            <div class="panel-header">
-              <h3>Ingresos recientes</h3>
+                <button type="submit" class="btn-primary">Guardar presupuesto</button>
+              </form>
             </div>
-            <ul id="income-list" class="tx-list"></ul>
+            <div class="panel">
+              <div class="panel-header">
+                <h3>Este mes</h3>
+                <span class="panel-badge" id="pres-mes"></span>
+              </div>
+              <div id="presupuestos-list" class="presupuestos-list"></div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- METAS -->
-      <div id="tab-metas" class="tab-content">
-        <div class="page-header">
-          <h1 class="page-title">Metas de ahorro</h1>
-          <p class="page-sub">Define y sigue tus objetivos financieros</p>
-        </div>
-        <div class="content-grid">
-          <div class="panel">
-            <div class="panel-header">
-              <h3>Nueva meta</h3>
-            </div>
-            <form id="meta-form" class="form">
-              <div class="field">
-                <label>Nombre de la meta</label>
-                <input type="text" id="meta-nombre" placeholder="Ej: Vacaciones, Fondo emergencia…" required />
-              </div>
-              <div class="field-row">
-                <div class="field">
-                  <label>Objetivo ($)</label>
-                  <input type="number" id="meta-objetivo" placeholder="0.00" step="0.01" min="1" required />
-                </div>
-                <div class="field">
-                  <label>Ya ahorrado ($)</label>
-                  <input type="number" id="meta-inicial" placeholder="0.00" step="0.01" min="0" />
-                </div>
-              </div>
-              <button type="submit" class="btn-primary">Crear meta</button>
-            </form>
+        <!-- ─── GRÁFICOS ─── -->
+        <div id="tab-graficos" class="tab-content">
+          <div class="page-header">
+            <h1 class="section-title">Análisis</h1>
+            <p class="section-sub">Visualiza tus patrones financieros</p>
           </div>
-          <div class="panel">
-            <div class="panel-header">
-              <h3>Mis metas</h3>
+          <div class="charts-grid">
+            <div class="panel">
+              <div class="panel-header">
+                <h3>Gastos por categoría</h3>
+              </div>
+              <div class="chart-wrap"><canvas id="chart-gastos-cat"></canvas></div>
             </div>
-            <div id="metas-list" class="metas-grid"></div>
+            <div class="panel">
+              <div class="panel-header">
+                <h3>Ingresos por categoría</h3>
+              </div>
+              <div class="chart-wrap"><canvas id="chart-ingresos-cat"></canvas></div>
+            </div>
+            <div class="panel panel-wide">
+              <div class="panel-header">
+                <h3>Evolución mensual</h3>
+                <button class="btn-refresh" onclick="loadGraficos()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                    <polyline points="23 4 23 10 17 10" />
+                    <polyline points="1 20 1 14 7 14" />
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                  </svg>
+                  Actualizar
+                </button>
+              </div>
+              <div class="chart-wrap chart-wrap--tall"><canvas id="chart-evolucion"></canvas></div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- PRESUPUESTOS -->
-      <div id="tab-presupuestos" class="tab-content">
-        <div class="page-header">
-          <h1 class="page-title">Presupuestos</h1>
-          <p class="page-sub">Define límites mensuales por categoría</p>
-        </div>
-        <div class="content-grid">
-          <div class="panel">
-            <div class="panel-header">
-              <h3>Nuevo presupuesto</h3>
-            </div>
-            <form id="presupuesto-form" class="form">
-              <div class="field">
-                <label>Categoría</label>
-                <select id="pres-categoria">
-                  <option value="Comida">Comida</option>
-                  <option value="Transporte">Transporte</option>
-                  <option value="Ocio">Ocio</option>
-                  <option value="Renta">Renta</option>
-                  <option value="Salud">Salud</option>
-                  <option value="Educación">Educación</option>
-                  <option value="Ropa">Ropa</option>
-                  <option value="Suscripciones">Suscripciones</option>
-                  <option value="Otros">Otros</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Límite mensual ($)</label>
-                <input type="number" id="pres-limite" placeholder="0.00" step="0.01" min="1" required />
-              </div>
-              <button type="submit" class="btn-primary">Guardar presupuesto</button>
-            </form>
-          </div>
-          <div class="panel">
-            <div class="panel-header">
-              <h3>Este mes</h3>
-              <span class="panel-month" id="pres-mes"></span>
-            </div>
-            <div id="presupuestos-list" class="presupuestos-list"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- GRAFICOS -->
-      <div id="tab-graficos" class="tab-content">
-        <div class="page-header">
-          <h1 class="page-title">Análisis</h1>
-          <p class="page-sub">Visualiza tus patrones financieros</p>
-        </div>
-        <div class="charts-grid">
-          <div class="panel">
-            <div class="panel-header"><h3>Gastos por categoría</h3></div>
-            <div class="chart-wrap"><canvas id="chart-gastos-cat"></canvas></div>
-          </div>
-          <div class="panel">
-            <div class="panel-header"><h3>Ingresos por categoría</h3></div>
-            <div class="chart-wrap"><canvas id="chart-ingresos-cat"></canvas></div>
-          </div>
-          <div class="panel panel-wide">
-            <div class="panel-header">
-              <h3>Evolución mensual</h3>
-              <button class="btn-refresh" onclick="loadGraficos()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-                Actualizar
-              </button>
-            </div>
-            <div class="chart-wrap chart-wrap--tall"><canvas id="chart-evolucion"></canvas></div>
-          </div>
-        </div>
-      </div>
-
+      </div><!-- /views -->
     </main>
-  </div>
+  </div><!-- /app -->
 
-  <!-- MODAL -->
+  <!-- MODAL CONFIRMACIÓN -->
   <div id="modal-overlay" class="modal-overlay" onclick="modalCancel()">
     <div class="modal-box" onclick="event.stopPropagation()">
       <div class="modal-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
       </div>
       <p id="modal-msg" class="modal-msg">¿Estás seguro?</p>
       <p class="modal-sub">Esta acción no se puede deshacer.</p>
@@ -357,6 +499,10 @@
     </div>
   </div>
 
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
   <script src="script.js"></script>
 </body>
+
 </html>
